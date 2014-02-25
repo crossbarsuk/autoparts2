@@ -45,7 +45,7 @@ class BlockUserInfo extends Module
 
 	public function install()
 	{
-		return (parent::install() AND $this->registerHook('top') AND $this->registerHook('leftColumn') AND $this->registerHook('header'));
+		return (parent::install() AND $this->registerHook('top') AND $this->registerHook('header'));
 	}
 
 	/**
@@ -75,15 +75,6 @@ class BlockUserInfo extends Module
 	{
 		$this->context->controller->addCSS(($this->_path).'blockuserinfo.css', 'all');
 	}
-
-  public function hookLeftColumn($params) {
-    //context->customer->isLogged(
-    if (!empty(Context::getContext()->customer->id)) {
-      return $this->display(__FILE__, 'blockuserinfo-left.tpl');
-    } else {
-      return;
-    }
-  }
 }
 
 

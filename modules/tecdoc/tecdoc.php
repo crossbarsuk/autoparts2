@@ -8,19 +8,19 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-class CoreOverride extends Module
+class TecDoc extends Module
 {
 	public function __construct()
 	{
-		$this->name = 'coreoverride';
+		$this->name = 'tecdoc';
 		$this->tab = 'front_office_features';
 		$this->version = '1.0';
 		$this->author = 'Genstu';
 
 		parent::__construct();
 
-		$this->displayName = $this->l('CoreOverride');
-		$this->description = $this->l('Override classes and controllers od shop core.');
+		$this->displayName = $this->l('TecDoc');
+		$this->description = $this->l('TecDoc');
 	}
 
 	public function install()
