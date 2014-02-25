@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <module>
+            <name>blockuppermenu</name>
+            <displayName><![CDATA[Upper menu]]></displayName>
+            <version><![CDATA[1.5]]></version>
+            <description><![CDATA[Add a new Upper menu of your e-commerce website.]]></description>
+            <author><![CDATA[Valpio]]></author>
+            <tab><![CDATA[front_office_features]]></tab>
+            <is_configurable>1</is_configurable>
+            <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+        </module>

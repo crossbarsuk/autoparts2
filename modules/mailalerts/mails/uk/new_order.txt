@@ -1,0 +1,29 @@
+Здравствуйте,
+
+Поступил новый заказ от {firstname} {lastname} ({email}) в магазине {shop_name}.
+
+Заказ: {order_name}
+Дата заказа: {date}
+Перевозчик: {carrier}
+Оплата: {payment}
+Скидки: {total_discounts}
+Доставка: {total_shipping}
+Товары на сумму: {total_products}
+Подарочная упаковка: {total_wrapping}
+Оплаченная сумма: {total_paid}
+
+Адрес доставки:
+
+{delivery_block_txt}
+
+Платежный адрес:
+
+{invoice_block_txt}
+
+Сообщение покупателя:
+
+{message}
+
+
+
+{shop_url} работает на PrestaShop™

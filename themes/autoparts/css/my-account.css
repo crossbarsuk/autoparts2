@@ -1,0 +1,76 @@
+/*#my-account  #left_column {display:none}*/
+/*#my-account #center_column {width:757px}*/
+/*#my-account #center_column h1 {margin-bottom:20px}*/
+
+/*#my-account #center_column .title_block  {*/
+	/*font-weight:normal;*/
+	/*font-size:12px;*/
+	/*color:#666*/
+/*}*/
+
+#my-account .myaccount_lnk_list {
+  list-style-type:none;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #DFDFDF;
+  border-top: 1px solid #DFDFDF;
+  margin: 0px -18px 10px;
+  display: block;
+  float: left;
+}
+
+#my-account .myaccount_lnk_list .col {
+	font-size:12px;
+	line-height:17px;
+  float: left;
+  /*width: 50%;*/
+
+  height: 74px;
+  /*margin: 6px 0;*/
+  padding: 6px 5px;
+  width: 353px;
+  background-color: #FFFFFF;
+  display: block;
+  /*margin: 6px 0;*/
+  /*border-left: 1px solid #DFDFDF;*/
+}
+#my-account .myaccount_lnk_list img.icon,
+#my-account p img.icon {
+  float: left;
+}
+
+#my-account .myaccount_lnk_list .col a {
+  font-size: 14px;
+}
+
+#my-account .myaccount_lnk_list .col a span {
+  display: block;
+
+  color: #1961A5;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  padding-left: 90px;
+
+}
+
+#my-account .myaccount_lnk_list .col p {
+  padding-left: 90px;
+  display: block;
+  font-size: 12px;
+}
+
+#my-account .myaccount_lnk_list .row .col + .col {
+  border-left: 1px solid #DFDFDF;
+}
+
+
+#my-account .myaccount_lnk_list .row {
+  border-bottom: 1px solid #DFDFDF;
+  float: left;
+  overflow: hidden;
+  padding: 6px 5px;
+}
+
+.my_account {
+  float: left;
+}

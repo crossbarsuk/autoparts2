@@ -1,0 +1,12 @@
+Здравствуйте,
+
+Товар {product} появился в наличии.
+TЭтот товар снова появился в наличии.
+
+You can access the product page on: {product_link}
+
+You can order it right now from our online shop.
+
+
+
+{shop_url} powered by PrestaShop™

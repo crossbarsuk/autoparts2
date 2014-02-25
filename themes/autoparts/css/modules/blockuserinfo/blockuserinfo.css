@@ -1,0 +1,119 @@
+/* block top user information */
+
+#header_right #header_user {
+	clear:both;
+	float: right;
+	/*margin-top:8px;*/
+}
+
+#header_right #header_user.header_user_catalog {
+	margin-top: 15px;
+    min-height: 60px;
+}
+
+#header_user #header_nav {
+	list-style-type:none;
+	float:right;
+}
+
+/* cart */
+.lt-ie6 #shopping_cart {width: 130px;}
+
+#shopping_cart {
+  /*-moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  background: url("../img/basket.png") no-repeat scroll 13px center #E8E8E8;
+  border-color: -moz-use-text-color #B3B3B3 #B3B3B3;
+  border-image: none;
+  border-radius: 0 0 5px 5px;
+  border-right: 2px groove #B3B3B3;
+  border-style: none groove groove;
+  border-width: medium 2px 2px;
+  color: #051F3C;*/
+  display: block;
+  float: right;
+  /*line-height: 20px;*/
+  /*min-width: 153px;*/
+  /*padding: 7px 20px 8px 36px;*/
+  /*height: 20px;*/
+  
+}
+
+#shopping_cart a{
+	height: 20px;
+	/*padding:15px 27px 10px 43px;*/
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  background: url("../../../img/basket.png") no-repeat scroll 13px center #E8E8E8;
+  border-color: -moz-use-text-color #B3B3B3 #B3B3B3;
+  border-image: none;
+  border-radius: 0 0 5px 5px;
+  border-right: 2px groove #B3B3B3;
+  border-style: none groove groove;
+  border-width: medium 2px 2px;
+  display: block;
+  float: right;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	/*border-radius: 3px;*/
+  /*display:block;*/
+  font-family: 'Open Sans',sans-serif;
+  font-size: 14px;
+  padding: 7px 20px 8px 36px;
+  line-height: 20px;
+  min-width: 153px;
+  color: #051F3C;
+}
+
+#shopping_cart a:hover span{text-decoration: none}
+#header_user #shopping_cart .ajax_cart_quantity { font-weight:bold; font-size:18px }
+#header_user #shopping_cart .ajax_cart_total { display:none !important; }
+
+
+/* account */
+#header_user #your_account {display:none;}
+#header_user #your_account a { background-image: url('img/icon/my-account.gif') }
+
+/* user infos */ 
+#header_user_info {
+	clear:both;
+	float:right;
+	margin-top:10px;
+	padding:0;
+	font-size:12px
+}
+#header_user_info a {
+	display:inline-block;
+	margin:0 0 0 10px;
+	padding:3px 0 0 34px;
+	line-height: 11px;
+	border-left:1px solid #000
+}
+#header_user_info a.account {
+	border: none;
+	display: inline;
+	margin: 0;
+	padding: 0;
+}
+*:first-child+html #header_user_info a {line-height:14px;}
+#header_user_info a.login {background: url('img/icon/login.gif') no-repeat 10px 0}
+#header_user_info a.logout {background: url('img/icon/logout.png') no-repeat 10px -1px}
+
+.profile_inf {
+  font-size: 13px;
+  margin: -8px 0 -2px;
+}
+
+.profile_inf p {
+  line-height: 18px;
+  padding: 0;
+}
+
+.balance {
+  color: #1961A5;
+  font-weight: bold;
+}

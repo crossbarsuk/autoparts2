@@ -1,0 +1,13 @@
+Здравствуйте, {name},
+
+
+{customer} отправил Вам ссылку на товар, который может Вас заинтересовать.
+
+{product}: {product_link}
+
+
+{shop_name} - {shop_url}
+
+
+
+{shop_name} работает на PrestaShop™

@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Сообщение от {shop_name}</title>
+</head>
+<body>
+<p>Сообщение от {shop_name}</p>
+<table style="font-family: Verdana,sans-serif; font-size: 11px; color: #374953; width: 550px;" border="0">
+<tbody>
+<tr>
+<td align="left"><a title="{shop_name}" href="{shop_url}"><img style="border: none;" src="{shop_logo}" alt="{shop_name}" /></a></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td align="left">Здравствуйте, <strong>{firstname} {lastname}</strong>,</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td style="background-color: #7a7879; color: #fff; font-size: 12px; font-weight: bold; padding: 0.5em 1em;" align="left">История Вашего заказа №{id_order}</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td align="left">Ваш заказ был успешно оформлен. Заказ будет отправлен Вам после получения оплаты.</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td align="left">Вы выбрали способ оплаты банковским платежем. Пожалуйста отправьте платеж: <br /><br /> <strong>{bankwire_owner}</strong> <br /><br /> {bankwire_details} <br /><br /> {bankwire_address} <br /><br /> Общая сумма заказа {total_paid}</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td align="left"><a href="{shop_url}modules/bankform/form.php?id_order={id_order}">Скачать квитанцию на оплату</a> <br />Вы можете скачать счет из раздела <a style="color: #7a7879; font-weight: bold; text-decoration: none;" href="{shop_url}history.php">"История заказов"</a> в Вашем аккаунте, кликнув <a style="color: #7a7879; font-weight: bold; text-decoration: none;" href="{shop_url}my-account.php">"Мой аккаунт"</a> на нашем сайте.</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td style="font-size: 10px; border-top: 1px solid #D9DADE;" align="center"><a style="color: #7a7879; font-weight: bold; text-decoration: none;" href="{shop_url}">{shop_name}</a></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,41 @@
+Здравствуйте, {firstname} {lastname}, благодарим вас за заказ!
+
+Детали заказа
+
+	Заказ: {order_name} добавлен {date}
+	Способ оплаты: {payment}
+
+	Итого: {total_products}
+	Скидки: {total_discounts}
+	Доставка: {total_shipping}
+	Подарочная упаковка {total_wrapping}
+	Итого к оплате: {total_paid}
+
+
+Доставка
+
+	Способ доставки: {carrier}
+
+	Адрес доставки:
+
+	{delivery_company}
+	{delivery_firstname} {delivery_lastname}
+	{delivery_address1}
+	{delivery_address2}
+	{delivery_postal_code} {delivery_city}
+	{delivery_country} {delivery state}
+	{delivery_other}
+
+	Адрес плательщика:
+
+	{invoice_company}
+	{invoice_firstname} {invoice_lastname}
+	{invoice_address1}
+	{invoice_address2}
+	{invoice_postal_code} {invoice_city}
+	{invoice_country} {invoice state}
+	{invoice_other}
+
+Вы можете просмотреть этот заказ и скачать счет-фактуру в нашем интернет-магазине, нажав "Мои заказы".
+
+{shop_name} - {shop_url}

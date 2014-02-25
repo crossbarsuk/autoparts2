@@ -1,0 +1,45 @@
+#ajax_tecdoc_form label {
+  color: #515151;
+  font-size: 14px;
+  margin-bottom: 10px;
+  float: left;
+  width: 100%;
+}
+
+#ajax_tecdoc_form select {
+  height: 24px !important;
+  margin-left: 5px;
+  overflow: hidden;
+  padding: 0 5px;
+  width: 100px;
+  float: right;
+}
+
+#ajax_tecdoc_form p {
+  float: left;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+
+#ajax_tecdoc_form .jq-selectbox.jqselect {
+  width: 100% !important;
+}
+
+#ajax_tecdoc_form .jq-selectbox-wrapper {
+  width: 100%;
+}
+
+#ajax_tecdoc_form .jq-selectbox__select {
+  height: 25px;
+}
+
+#ajax_tecdoc_form .jq-selectbox__dropdown {
+  top: 26px;
+}
+
+#ajax_tecdoc_form .button {
+  float: right;
+  margin-top: 5px;
+}

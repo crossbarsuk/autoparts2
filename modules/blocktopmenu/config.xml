@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <module>
+            <name>blocktopmenu</name>
+            <displayName><![CDATA[Главное горизонтальное меню]]></displayName>
+            <version><![CDATA[1.7]]></version>
+            <description><![CDATA[Добавьте новое меню сверху своего магазина.]]></description>
+            <author><![CDATA[PrestaShop]]></author>
+            <tab><![CDATA[front_office_features]]></tab>
+            <is_configurable>1</is_configurable>
+            <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+        </module>

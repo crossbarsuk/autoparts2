@@ -1,0 +1,8 @@
+Здравствуйте, {firstname} {lastname},
+
+Ваши учетные данные для авторизации:
+
+E-mail: {email}
+Пароль: {passwd}
+ 
+{shop_name} - {shop_url}
