@@ -26,7 +26,8 @@
 				{elseif isset($product.reduction) && $product.reduction && isset($product.show_price) && $product.show_price && !$PS_CATALOG_MODE}<span class="discount">{l s='Reduced price!'}</span>{/if}*}
 				{if (!$PS_CATALOG_MODE AND ((isset($product.show_price) && $product.show_price) || (isset($product.available_for_order) && $product.available_for_order)))}
 				<div class="content_price">
-					{if isset($product.show_price) && $product.show_price && !isset($restricted_country_mode)}<span class="price price_box">{if !$priceDisplay}{convertPrice price=$product.price}{else}{convertPrice price=$product.price_tax_exc}{/if}</span><br />{/if}
+          <a href="{$product.link|escape:'htmlall':'UTF-8'}">
+					{if isset($product.show_price) && $product.show_price && !isset($restricted_country_mode)}<span class="price price_box">{if !$priceDisplay}{convertPrice price=$product.price}{else}{convertPrice price=$product.price_tax_exc}{/if}</span><br />{/if}</a>
 					{*{if isset($product.available_for_order) && $product.available_for_order && !isset($restricted_country_mode)}
             <span class="availability">
             {if ($product.allow_oosp || $product.quantity > 0)}

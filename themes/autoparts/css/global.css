@@ -277,10 +277,11 @@ input.button_small, input.button_small_disabled, input.exclusive_small, input.ex
 	background-image: url('../img/button-small.png')*/
 }
 input.button_disabled, input.exclusive_disabled, span.exclusive {
-	border:1px solid #ccc;
-	color:#999;
-	background:url(../img/bg_bt_2.gif) repeat-x 0 0 #CCCCCC;
-	cursor:default;
+	border: 1px solid #CCCCCC;
+	color: #999999;
+	background: url("../img/bg_bt_2.gif") repeat-x scroll 0 0 #CCCCCC;
+	cursor: default;
+  display: none;
 }
 input.button_large, input.button_large_disabled, input.exclusive_large, input.exclusive_large_disabled, a.button_large, a.exclusive_large, span.button_large, span.exclusive_large, span.exclusive_large_disabled {
 	/*width: 180px;

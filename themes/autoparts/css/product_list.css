@@ -16,6 +16,8 @@ ul#product_list {
   font-size: 12px;
   /*margin: 0 7px;*/
   width: 162px;
+  height: 267px;
+  position: relative;
 }
 #product_list li a {
 	/*color: #374853;*/
@@ -103,10 +105,10 @@ ul#product_list {
 }
 
 #product_list li .right_block {
-position: relative;
-float: left;
-width: 162px;
+position: absolute;
+  width: 162px;
   margin-top: 2px;
+  bottom: 0;
 }
 #product_list li .discount, ul#product_list li .on_sale, ul#product_list li .online_only {
 	display: block;

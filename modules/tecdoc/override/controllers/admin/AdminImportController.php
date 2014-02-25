@@ -616,6 +616,11 @@ class AdminImportController extends AdminImportControllerCore
       else if (isset($product->price_tin) && isset($product->price_tex))
         $product->price = $product->price_tex;
 
+      $iPartsCat = Category::searchByNameAndParentCategoryId(Language::getIdByIso('RU'), 'Автозапчасти', Configuration::get('PS_HOME_CATEGORY'));
+      if ($iPartsCat) {
+        $product->id_category[] = $iPartsCat;
+      }
+      
       if (isset($product->category) && is_array($product->category) && count($product->category))
       {
         $product->id_category = array(); // Reset default values array
@@ -683,6 +688,7 @@ class AdminImportController extends AdminImportControllerCore
           }
         }
       }
+      
 
       $product->id_category_default = isset($product->id_category[0]) ? (int)$product->id_category[0] : '';
 
