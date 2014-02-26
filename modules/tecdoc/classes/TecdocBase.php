@@ -75,6 +75,25 @@ class TecdocBase {
     return $list;
   }
 
+  public function getModels($iManufacturerId, $bOnlyPassenger = true) {
+    $list = array();
+
+    $sql = new TecdocQuery();
+    $sql->select('mod.MOD_ID AS id,	tex.TEX_TEXT AS name,	MOD_PCON_START,	MOD_PCON_END');
+    $sql->from('MODELS', 'mod');
+    $sql->innerJoin('COUNTRY_DESIGNATIONS', 'cds', '(cds.CDS_ID = mod.MOD_CDS_ID AND cds.CDS_LNG_ID = ' . TECDOC_LANG_ID .')');
+    $sql->innerJoin('DES_TEXTS', 'tex', '(tex.TEX_ID = cds.CDS_TEX_ID)');
+    $sql->where('mod.MOD_MFA_ID = ' . $iManufacturerId . ($bOnlyPassenger ? ' AND mod.MOD_PC = 1' : ''));
+    $sql->orderBy('name ASC, id ASC');
+
+    $pRes = $this->_dbLink->query($sql->build());
+    while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
+      $list[] = $aRow;
+    }
+
+    return $list;
+  }
+
   /**
    * Get text of description by DES_ID
    * 

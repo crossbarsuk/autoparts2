@@ -98,7 +98,23 @@ class CarController extends FrontController
   {
     parent::initContent();
 
-//    $this->assignManufacturers();
+    $manufacturerList = array();
+    $modelList = array();
+    $bEditMode = (int)Tools::getValue('edit_mode', 0);
+    if ($bEditMode) {
+      $tecdoc = new TecdocBase();
+
+      $aManufacturers = $tecdoc->getManufacturers();
+      foreach ($aManufacturers as $aManufacturer) {
+        $manufacturerList[] = '<option id="' . $aManufacturer['id'] . '">' . $aManufacturer['name'] . '</option>';
+      }
+      $manufacturerList = implode("\n", $manufacturerList);
+
+      foreach ($tecdoc->getModels($aManufacturers[0]['id']) as $aModel) {
+        $modelList[] = '<option id="' . $aModel['id'] . '">' . $aModel['name'] . '</option>';
+      }
+      $modelList = implode("\n", $modelList);
+    }
 //    $this->assignModels();
 
     // Assign common vars
@@ -109,7 +125,9 @@ class CarController extends FrontController
 //        'select_address' => (int)Tools::getValue('select_address'),
       'car' => $this->_car,
       'id_car' => (Validate::isLoadedObject($this->_car)) ? $this->_car->id : 0,
-      'edit_mode' => (int)Tools::getValue('edit_mode', 0),
+      'edit_mode' => $bEditMode,
+      'manufacturerList' => $manufacturerList,
+      'modelList' => $modelList,
     ));
 
     if ($back = Tools::getValue('back'))

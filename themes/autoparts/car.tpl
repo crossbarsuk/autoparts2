@@ -72,7 +72,7 @@ $(function(){ldelim}
 		</p>
     <p class="required select">
       <label for="id_model">{l s='Модель'} <sup>*</sup></label>
-      <select id="id_model" name="id_model"></select>
+      <select id="id_model" name="id_model">{$modelList}</select>
     </p>
     <p class="required select">
       <label for="id_mod">{l s='Модификация'} <sup>*</sup></label>
