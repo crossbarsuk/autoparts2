@@ -503,7 +503,7 @@ class AdminImportController extends AdminImportControllerCore
       if (empty($product->id)) {
         if (!isset($tecdoc)) {
           require_once(_PS_MODULE_DIR_ . '/tecdoc/TecDoc.class.php');
-          $tecdoc = new TecDoc();
+          $tecdoc = new TecDocBase();
         }
         
         //TODO: get data from TECDOC (product images and features) and apply to product

@@ -32,7 +32,7 @@ require_once(_PS_MODULE_DIR_ . '/tecdoc/TecdocQuery.class.php');
 /**
  * Class TecDoc
  */
-class TecDoc {
+class TecDocBase {
   private $_dbServer;
   private $_dbName;
   private $_dbUser;
@@ -70,6 +70,26 @@ class TecDoc {
 //    $product->image = array();
 //    $features['features']
   }
+  
+  public function getManufacturers($bOnlyPassenger = true) {
+    $list = array();
+    
+    $sql = new TecdocQuery();
+    $sql->select('MFA_ID AS id,	MFA_BRAND AS name');
+    $sql->from('MANUFACTURERS', 'man');
+    if ($bOnlyPassenger) {
+      $sql->where('MFA_PC_MFC = 1');
+    }
+    $sql->orderBy('MFA_BRAND');
+
+    $pRes = $this->_dbLink->query($sql->build());
+    while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
+      $list[] = $aRow;
+    }
+
+    return $list;
+  }
+  
 
   /**
    * Get text of description by DES_ID
@@ -189,7 +209,7 @@ class TecDoc {
     return $aCatList;
   }
   
-  protected function getManufacturer($article) {
+  /*protected function getManufacturer($article) {
     $sql = new TecdocQuery();
     $sql->select('sup.SUP_BRAND');
     $sql->from('SUPPLIERS', 'sup');
@@ -197,7 +217,7 @@ class TecDoc {
     $sql->where("art.ART_ARTICLE_NR = '" . $article . "'");
     
     return $this->_dbLink->getValue($sql->build());
-  }
+  }*/
   
   protected function getImages($article) {
     $imageList = array();
@@ -261,4 +281,5 @@ class TecDoc {
    
     
   }
+  
 } 

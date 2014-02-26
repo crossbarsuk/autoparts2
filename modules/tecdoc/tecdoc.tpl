@@ -5,7 +5,11 @@
     <div class="form_content clearfix">
       <p class="text">
         <label for="tecdoc_manufacturer">{l s='Производитель' mod='tecdoc'}</label>
-        <select id="tecdoc_manufacturer" name="manufacturer"></select>
+        <select id="tecdoc_manufacturer" name="manufacturer">
+{foreach from=$aManufacturers item="aManufacturer"}
+          <option value="{$aManufacturer.id}">{$aManufacturer.name|escape:'htmlall':'UTF-8'}</option>
+{/foreach}
+        </select>
       </p>
       <p class="text">
         <label for="tecdoc_model">{l s='Модель' mod='tecdoc'}</label>

@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<partners>
+	<partner>
+		<name><![CDATA[PayPal]]></name>
+		<module>paypal</module>
+		<checkconfiguration>
+			<key>PAYPAL_API_USER</key>
+			<key>PAYPAL_API_PASSWORD</key>
+			<key>PAYPAL_API_SIGNATURE</key>
+		</checkconfiguration>
+		<logo><![CDATA[http://api.prestashop.com/partner/premium/images/paypal.png]]></logo>
+		<labels>
+			<label iso="en"><![CDATA[Accept your first payments no later than today!]]></label>
+			<label iso="es"><![CDATA[Comience a aceptar pagos hoy mismo!]]></label>
+			<label iso="de"><![CDATA[PayPal Business Konto erstellen]]></label>
+			<label iso="fr"><![CDATA[Commencez a accepter des paiements aujourd'hui !]]></label>
+			<label iso="it"><![CDATA[Inizia ad accettare pagamenti oggi stesso.]]></label>
+		</labels>
+		<optionals>
+			<optional iso="es"><![CDATA[http://api.prestashop.com/partner/premium/images/paypal/es.png]]></optional>
+			<optional iso="fr"><![CDATA[http://api.prestashop.com/partner/premium/images/paypal/fr.png]]></optional>
+			<optional iso="it"><![CDATA[http://api.prestashop.com/partner/premium/images/paypal/it.png]]></optional>
+		</optionals>
+		<descriptions>
+			<description iso="en"><![CDATA[
+<p><b style="font-size: 12px; margin-bottom: 10px;">Payment method : PayPal</b></p>
+<p style="font-size: 11px; width: 430px; text-align: justify;">If your company already owns a PayPal account :</p>
+<ul style="font-size: 11px;">
+<li>1. <b style="color: #D41958;">Finish the prestashop install</b> (no needs to fill the form below)</li>
+<li>2. Go to the <b style="color: #D41958;">PayPal payment « module »</b> to <b>configure</b> your options</li>
+</ul>
+<p style="font-size: 11px; width: 430px; text-align: justify;"><b style="color: #D41958;">If your company doesn’t have  PayPal account yet</b>,</p>
+<ul style="font-size: 11px;">
+<li>1. Check the box below</li>
+<li>2. Fill in  the short form</li>
+<li>3. Finish the PrestaShop install</li>
+<li>4. Finalize the PayPal account creation from your PrestaShop merchant backoffice</li>
+</ul>
+<p style="font-size: 11px;">Once you PayPal account created, go to the <b style="color: #D41958;">PayPal payment « module »</b> to <b>configure</b> your options  and go live  with the leading provider of internet payment solution.</p>
+			]]></description>
+			<description iso="es"><![CDATA[
+<p><b style="font-size: 12px; margin-bottom: 10px;">Reciba pagos con tarjeta de forma rápida con PayPal</b></p>
+<p style="font-size: 11px; width: 430px; text-align: justify;">Si su empresa ya tiene una cuenta PayPal :</p>
+<ul style="font-size: 11px;">
+<li>1. <b style="color: #D41958;">Termine la instalación de PrestaShop</b> (no es necesario rellenar el formulario que aparece a continuación)</li>
+<li>2. vaya al <b style="color: #D41958;">módulo de pago con PayPal</b> para <b>configurar</b> sus opciones</li>
+</ul>
+<p style="font-size: 11px; width: 430px; text-align: justify;"><b style="color: #D41958;">Si su empresa aún no tiene cuenta PayPal</b>,</p>
+<ul style="font-size: 11px;">
+<li>1. Marque la casilla a continuación</li>
+<li>2. Rellene el breve formulario</li>
+<li>3. Termine la instalación de PrestaShop</li>
+<li>4. Finalice la creación de la cuenta PayPal en la sección de administración de PrestaShop</li>
+</ul>
+<p style="font-size: 11px;">Una vez haya creado la cuenta PayPal, vaya <b style="color: #D41958;">al módulo de pago con PayPal</b> para <b style="color: #D41958;">configurar</b> sus opciones e integrar la principal de la solución de pago en Internet.<br />Tareas pendientes: creación de cuenta PayPal</p>
+			]]></description>
+			<description iso="de"><![CDATA[
+<p><b style="font-size: 12px; margin-bottom: 10px;">Erhalten Sie Zahlungen schneller mit PayPal</b></p>
+<p style="font-size: 11px; width: 430px; text-align: justify;">Sollte Ihr Unternehmen schon über ein PayPal Konto verfügen :</p>
+<ul style="font-size: 11px;">
+<li>1. <b style="color: #D41958;">Beenden Sie die PrestaShop Installation</b> (Es ist nicht notwendig das untenstehende Formular auszufüllen)</li>
+<li>2. Gehen Sie zum <b style="color: #D41958;">PayPal Bezahlmethoden "Modul"</b>, um die Optionen <b>einzustellen</b></li>
+</ul>
+<p style="font-size: 11px; width: 430px; text-align: justify;"><b style="color: #D41958;">Sollte Ihr Unternehmen noch über kein PayPal Konto verfügen</b>,</p>
+<ul style="font-size: 11px;">
+<li>1. Wählen Sie das untenstehende Feld aus</li>
+<li>2. Füllen Sie das kurze Formular aus</li>
+<li>3. Beenden Sie die PrestaShop Installation</li>
+<li>4. Schließen Sie die PayPal Kontoerstellung über Ihr PrestaShop Händler Backoffice ab</li>
+</ul>
+<p style="font-size: 11px;">Wenn Ihr PayPal Konto erstellt wurde, gehen Sie zum <b style="color: #D41958;">PayPal Bezahlmethoden "Modul"</b>, um Einstellungen vorzunehmen und nutzen Sie alle PayPal Vorteile!<br />Noch ausstehend: PayPal Konto erstellen</p>
+			]]></description>
+			<description iso="it"><![CDATA[
+<p><b style="font-size: 12px; margin-bottom: 10px;">Ricevi pagamenti tramite carta in modo rapido con PayPal!</b></p>
+<p style="font-size: 11px; width: 430px; text-align: justify;">Se la tua azienda ha già un conto PayPal :</p>
+<ul style="font-size: 11px;">
+<li>1. <b style="color: #D41958;">Completa l'installazione di PrestaShop</b> (non è necessario compilare la scheda sottostante)</li>
+<li>2. Vai al <b style="color: #D41958;">"modulo" di pagamento PayPal</b> e <b>imposta</b> le tue opzioni</li>
+</ul>
+<p style="font-size: 11px; width: 430px; text-align: justify;"><b style="color: #D41958;">Se la tua azienda non ha ancora un conto PayPal</b>,</p>
+<ul style="font-size: 11px;">
+<li>1. Seleziona la casella riportata di seguito</li>
+<li>2. Compila la breve scheda</li>
+<li>3. Completa l'installazione di PrestaShop</li>
+<li>4. Completa la creazione del conto PayPal nella sezione backoffice PrestaShop</li>
+</ul>
+<p style="font-size: 11px;">Dopo aver creato il tuo conto PayPal, vai <b style="color: #D41958;">al "modulo" di pagamento PayPal</b>, <b>imposta</b> le tue opzioni e vai live con una soluzione di pagamento innovativa.</p>
+			]]></description>
+		</descriptions>
+	</partner>
+<partner>
+	<name><![CDATA[MoneyBookers by Skrill]]></name>
+	<module>moneybookers</module>
+	<checkconfiguration>
+		<key>MB_SECRET_WORD</key>
+	</checkconfiguration>
+	<logo>http://api.prestashop.com/partner/premium/images/moneybookers.png</logo>
+	<labels>
+		<label iso="en"><![CDATA[Accept local payments by Skrill]]></label>
+		<label iso="de"><![CDATA[Annehmen Sie Zahlungen mit Skrill]]></label>
+		<label iso="fr"><![CDATA[Acceptez les paiements localement via Skrill]]></label>
+	</labels>
+	<descriptions>
+	</descriptions>
+</partner>
+
+</partners>
