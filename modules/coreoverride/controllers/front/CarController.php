@@ -14,6 +14,31 @@ class CarController extends FrontController
   public function init() {
     parent::init();
 
+    if ($this->ajax) {
+      $aResult = array(
+        'status' => 'ok',
+      );
+
+      $action = Tools::getValue('action', '');
+      if (empty($action)) {
+        $aResult['status'] = 'error';
+        $aResult['error'] = 'incorrect or empty action';
+        die(Tools::jsonEncode($aResult));
+      }
+
+      switch ($action) {
+        case 'getmodels' :
+          $this->ajaxGetModels($aResult);
+          break;
+        case 'getyears' :
+          $this->ajaxGetYears($aResult);
+          break;
+      }
+
+      die(Tools::jsonEncode($aResult));
+    }
+    
+    
     // Get car ID
     $id_car = (int)Tools::getValue('id_car', 0);
 
@@ -28,28 +53,6 @@ class CarController extends FrontController
           }
           $this->errors[] = Tools::displayError('This car cannot be deleted.');
         }
-      } elseif ($this->ajax) {
-        $aResult = array(
-          'status' => 'ok',
-        );
-        
-        $action = Tools::getValue('action', '');
-        if (empty($action)) {
-          $aResult['status'] = 'error';
-          $aResult['error'] = 'incorrect or empty action';
-          die(Tools::jsonEncode($aResult));
-        }
-
-        switch ($action) {
-          case 'getmodels' :
-            $this->ajaxGetModels($aResult);
-            break;
-          case 'getyears' :
-            $this->ajaxGetYears($aResult);
-            break;
-        }
-        
-        die(Tools::jsonEncode($aResult));
       } else {
         Tools::redirect('index.php?controller=cars');
       }
@@ -79,7 +82,7 @@ class CarController extends FrontController
 
       $aManufacturers = $tecdoc->getManufacturers();
       foreach ($aManufacturers as $aManufacturer) {
-        $manufacturerList[] = '<option id="' . $aManufacturer['id'] . '">' . $aManufacturer['name'] . '</option>';
+        $manufacturerList[] = '<option value="' . $aManufacturer['id'] . '">' . $aManufacturer['name'] . '</option>';
       }
       $manufacturerList = implode("\n", $manufacturerList);
 
@@ -156,7 +159,7 @@ class CarController extends FrontController
     $modelList = array();
     $tecdoc = new TecdocBase();
     foreach ($tecdoc->getModels($iManufacturerId, $bOnlyPassenger) as $aModel) {
-      $modelList[] = '<option id="' . $aModel['id'] . '">' . $aModel['name'] . '</option>';
+      $modelList[] = '<option value="' . $aModel['id'] . '">' . $aModel['name'] . '</option>';
     }
     
     return implode("\n", $modelList);
@@ -169,7 +172,7 @@ class CarController extends FrontController
     $yearList = array();
     if (is_array($aModel) && count($aModel)) {
       for ($i = (int)substr($aModel['start'], 0, 4); $i <= (int)substr($aModel['end'], 0, 4); ++$i) {
-        $yearList[] = '<option id="' . $i . '">' . $i . '</option>';
+        $yearList[] = '<option value="' . $i . '">' . $i . '</option>';
       }
     }
 
@@ -186,7 +189,7 @@ class CarController extends FrontController
     }
     
     $modelOptionList = $this->getModelOptionList($id_manufacturer);
-    if (!is_array($modelOptionList) || !count($modelOptionList)) {
+    if (empty($modelOptionList)) {
       $aResult['status'] = 'error';
       $aResult['error'] = 'incorrect or empty model list';
 
@@ -207,12 +210,10 @@ class CarController extends FrontController
 
     $yearList = $this->getYearOptionList($id_model);
     if (empty($yearList)) {
-      if (empty($id_model)) {
-        $aResult['status'] = 'error';
-        $aResult['error'] = 'incorrect or empty id_model';
+      $aResult['status'] = 'error';
+      $aResult['error'] = 'incorrect or empty id_model';
 
-        return;
-      }
+      return;
     }
 
     $aResult['yearlist'] = $yearList;

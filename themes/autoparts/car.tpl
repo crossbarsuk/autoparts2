@@ -5,40 +5,45 @@ function ajaxQuery(params, callbackFunction) {
     type: 'POST',
     url: baseDir + 'index.php?controller=car&ajax&' + params,
     dataType: 'json',
-    success: function(json) {
-      if (json.status == 'ok') {
-        callbackFunction(json);
+    success: function(data) {
+      console.log(data);
+      if (data.status == 'ok') {
+        callbackFunction(data);
       }
     }
   });
 }
 
-function changeManufacturer(id_manufacturer) {
-  ajaxQuery('action=getmodels&id_manufacturer=' + id_manufacturer, 'updateModels');
+var updateModels = function(data) {
+  $('#id_model').html(data.models);
+  $('#id_model').trigger('refresh');
 }
 
-function updateModels(data) {
-  $('#id_model').html(data.models.join(''));
+var updateYears = function(data) {
+  $('#year').html(data.years);
+}
+
+function changeManufacturer(id_manufacturer) {
+  ajaxQuery('action=getmodels&id_manufacturer=' + id_manufacturer, updateModels);
 }
 
 function changeModel(id_model) {
-  ajaxQuery('action=getyears&id_model=' + id_model, 'updateYears');
+  ajaxQuery('action=getyears&id_model=' + id_model, updateYears);
 }
 
-function updateYears(data) {
-  $('#year').html(data.years.join(''));
-}
+
 
 $(document).ready(function() {
-  $('#id_manufacturer').onchange(function() {
+  $('#id_manufacturer').change(function() {
     changeManufacturer($(this).val());
   });
 
-  $('#id_model').onchange(function() {
+  $('#id_model').change(function() {
     changeModel($(this).val());
   });
 
   $('#id_manufacturer').trigger('change');
+  $('#id_model').trigger('change');
 });
 
 </script>
