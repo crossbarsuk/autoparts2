@@ -29,9 +29,20 @@ class Tecdoc extends Module
       parent::install() == false
       || $this->registerHook('header') == false
       || $this->registerHook('leftColumn') == false
+      || !$this->installClasses()
 //			|| $this->registerHook('rightColumn') == false
     )
       return false;
+    return true;
+  }
+
+  public function uninstall()
+  {
+    if (!$this->uninstallClasses() ||
+      !parent::uninstall()) {
+      return false;
+    }
+
     return true;
   }
 
@@ -46,9 +57,7 @@ class Tecdoc extends Module
 
   public function hookRightColumn($params)
   {
-    require_once(dirname(__FILE__) . '/TecDoc.class.php');
-    
-    $tecdoc = new TecDocBase();
+    $tecdoc = new TecdocBase();
     $aManufacturers = $tecdoc->getManufacturers();
     
     $this->smarty->assign('aManufacturers', $aManufacturers);
@@ -59,6 +68,14 @@ class Tecdoc extends Module
   public function hookLeftColumn($params)
   {
     return $this->hookRightColumn($params);
+  }
+
+  protected function installClasses() {
+    return $this->installDirClasses('classes');
+  }
+
+  protected function uninstallClasses() {
+    return $this->uninstallDirClasses('classes');
   }
 }
 

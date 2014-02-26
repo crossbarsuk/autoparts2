@@ -11,3 +11,15 @@
   margin: 15px 0 10px;
 }
 
+#car p {
+  float: left;
+  width: 100%;
+}
+
+#car p .jq-selectbox-wrapper, #car p label {
+  float: left;
+}
+
+#car p label {
+  width: 162px;
+}

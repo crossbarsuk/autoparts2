@@ -2155,6 +2155,40 @@ abstract class ModuleCore
 
 		return true;
 	}
+
+  protected function installDirClasses($sDir) {
+    $sPath = $this->local_path . '/' . $sDir;
+    $dPath = _PS_ROOT_DIR_ . '/' . $sDir;
+
+    if (!is_dir($sPath))
+      return true;
+
+    foreach (Tools::scandir($sPath, 'php', '', true) as $file) {
+      copy($sPath .'/' . $file, $dPath .'/' . $file);
+    }
+
+    // Re-generate the class index
+    Autoload::getInstance()->generateIndex();
+
+    return true;
+  }
+
+  protected function uninstallDirClasses($sDir) {
+    $sPath = dirname(__FILE__) . '/' . $sDir;
+    $dPath = _PS_ROOT_DIR_ . '/' . $sDir;
+
+    if (!is_dir($sPath))
+      return true;
+
+    foreach (Tools::scandir($sPath, 'php', '', true) as $file) {
+      unlink($dPath .'/' . $file);
+    }
+
+    // Re-generate the class index
+    Autoload::getInstance()->generateIndex();
+
+    return true;
+  }
 }
 
 function ps_module_version_sort($a, $b)

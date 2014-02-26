@@ -14,25 +14,10 @@ define('TECDOC_DB_PASSWD', 'root');
 define('TECDOC_LANG_ID', '16');
 define('TECDOC_PREFIX', 'TOF_');
 
-
-/*
-    $sql = new DbQuery();
-		$sql->select('cp.`id_product_attribute`, cp.`id_product`);
-		$sql->from('cart_product', 'cp');
-		$sql->leftJoin('product', 'p', 'p.`id_product` = cp.`id_product`');
-		$sql->innerJoin('product_shop', 'product_shop', '(product_shop.id_shop=cp.id_shop AND product_shop.id_product = p.id_product)');
-		$sql->where('cp.`id_cart` = '.(int)$this->id);
-		$sql->groupBy('unique_id');
-		$sql->orderBy('p.id_product, cp.id_product_attribute, cp.date_add ASC');
-   */
-
-require_once(_PS_MODULE_DIR_ . '/tecdoc/TecdocQuery.class.php');
-
-
 /**
  * Class TecDoc
  */
-class TecDocBase {
+class TecdocBase {
   private $_dbServer;
   private $_dbName;
   private $_dbUser;
@@ -89,7 +74,6 @@ class TecDocBase {
 
     return $list;
   }
-  
 
   /**
    * Get text of description by DES_ID

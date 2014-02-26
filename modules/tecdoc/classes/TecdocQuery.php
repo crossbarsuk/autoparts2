@@ -9,9 +9,7 @@
 /**
  * SQL query builder
  */
-class TecdocQuery extends DbQueryCore
-{
-  
+class TecdocQuery extends DbQueryCore {
   public function from($table, $alias = null, $sTablePrefix = null) {
     if (!empty($table))
       $this->query['from'][] = '`'.(isset($sTablePrefix) ? $sTablePrefix : TECDOC_PREFIX).$table.'`'.($alias ? ' '.$alias : '');

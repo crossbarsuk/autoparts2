@@ -28,13 +28,9 @@ class CoreOverride extends Module
 	{
 		if (
 			parent::install() == false
-//			|| $this->registerHook('top') == false
 			|| $this->registerHook('header') == false
       || !$this->installClasses()
       || !$this->addCarDB()
-//			|| $this->registerHook('displayTop') == false
-//			|| $this->registerHook('leftColumn') == false
-//			|| $this->registerHook('rightColumn') == false
     )
 			return false;
 		return true;
@@ -68,45 +64,13 @@ class CoreOverride extends Module
 	}
 
   protected function installClasses() {
-    return ($this->_installClasses('controllers/front')
-    && $this->_installClasses('classes'));
+    return ($this->installDirClasses('controllers/front') && $this->installDirClasses('classes'));
 //    $this->_installControllers('controllers/admin');
   }
 
-  protected function _installClasses($sDir) {
-    $sPath = dirname(__FILE__) . '/' . $sDir;
-    $dPath = _PS_ROOT_DIR_ . '/' . $sDir;
-    
-    if (!is_dir($sPath))
-      return true;
-
-    foreach (Tools::scandir($sPath, 'php', '', true) as $file) {
-      copy($sPath .'/' . $file, $dPath .'/' . $file);
-    }
-    
-    // Re-generate the class index
-    Autoload::getInstance()->generateIndex();
-
-    return true;
-  }
-
   protected function uninstallClasses() {
-    return $this->_uninstallClasses('front');
-//    $this->_uninstallControllers('admin');
-  }
-  
-  protected function _uninstallClasses($sDir) {
-    $sPath = dirname(__FILE__) . '/' . $sDir;
-    $dPath = _PS_ROOT_DIR_ . '/' . $sDir;
-
-    foreach (Tools::scandir($sPath, 'php', '', true) as $file) {
-      unlink($dPath .'/' . $file);
-    }
-
-    // Re-generate the class index
-    Autoload::getInstance()->generateIndex();
-
-    return true;
+    return ($this->uninstallDirClasses('controllers/front') && $this->uninstallDirClasses('classes'));
+//    $this->uninstallDirClasses('controllers/admin');
   }
   
   protected function addCarDB() {

@@ -296,6 +296,7 @@ input.exclusive_large, input.exclusive_large_disabled, a.exclusive_large, span.e
 
 /* form **************************************************************************************** */
 form.std fieldset {
+  float: left;
 }
 
 /* table *************************************************************************************** */
