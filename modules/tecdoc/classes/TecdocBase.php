@@ -79,11 +79,11 @@ class TecdocBase {
     $list = array();
 
     $sql = new TecdocQuery();
-    $sql->select('mod.MOD_ID AS id,	tex.TEX_TEXT AS name,	MOD_PCON_START,	MOD_PCON_END');
-    $sql->from('MODELS', 'mod');
-    $sql->innerJoin('COUNTRY_DESIGNATIONS', 'cds', '(cds.CDS_ID = mod.MOD_CDS_ID AND cds.CDS_LNG_ID = ' . TECDOC_LANG_ID .')');
+    $sql->select('DISTINCT md.MOD_ID AS id, tex.TEX_TEXT AS name, md.MOD_PCON_START AS start, md.MOD_PCON_END AS end');
+    $sql->from('MODELS', 'md');
+    $sql->innerJoin('COUNTRY_DESIGNATIONS', 'cds', '(cds.CDS_ID = md.MOD_CDS_ID)');
     $sql->innerJoin('DES_TEXTS', 'tex', '(tex.TEX_ID = cds.CDS_TEX_ID)');
-    $sql->where('mod.MOD_MFA_ID = ' . $iManufacturerId . ($bOnlyPassenger ? ' AND mod.MOD_PC = 1' : ''));
+    $sql->where('md.MOD_MFA_ID = ' . $iManufacturerId . ($bOnlyPassenger ? ' AND md.MOD_PC = 1' : ''));
     $sql->orderBy('name ASC, id ASC');
 
     $pRes = $this->_dbLink->query($sql->build());
@@ -93,6 +93,19 @@ class TecdocBase {
 
     return $list;
   }
+
+  public function getModel($iModelId) {
+    $sql = new TecdocQuery();
+    $sql->select('DISTINCT md.MOD_ID AS id, tex.TEX_TEXT AS name, md.MOD_PCON_START AS start, md.MOD_PCON_END AS end');
+    $sql->from('MODELS', 'md');
+    $sql->innerJoin('COUNTRY_DESIGNATIONS', 'cds', '(cds.CDS_ID = md.MOD_CDS_ID)');
+    $sql->innerJoin('DES_TEXTS', 'tex', '(tex.TEX_ID = cds.CDS_TEX_ID)');
+    $sql->where('md.MOD_ID = ' . $iModelId);
+
+    return $this->_dbLink->getRow($sql->build());
+  }
+  
+  
 
   /**
    * Get text of description by DES_ID

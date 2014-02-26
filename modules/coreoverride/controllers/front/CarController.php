@@ -28,11 +28,32 @@ class CarController extends FrontController
           }
           $this->errors[] = Tools::displayError('This car cannot be deleted.');
         }
-      }
-      elseif ($this->ajax)
-        exit;
-      else
+      } elseif ($this->ajax) {
+        $aResult = array(
+          'status' => 'ok',
+        );
+        
+        $action = Tools::getValue('action', '');
+        if (empty($action)) {
+          $aResult['status'] = 'error';
+          $aResult['error'] = 'incorrect or empty action';
+          die(Tools::jsonEncode($aResult));
+        }
+
+        switch ($action) {
+          case 'getmodels' :
+            $this->ajaxGetModels($aResult);
+            break;
+          case 'getyears' :
+            $this->ajaxGetYears($aResult);
+            break;
+        }
+        
+        die(Tools::jsonEncode($aResult));
+      } else {
         Tools::redirect('index.php?controller=cars');
+      }
+        
     }
   }
 
@@ -46,6 +67,47 @@ class CarController extends FrontController
     
   }
 
+  public function initContent()
+  {
+    parent::initContent();
+
+    $manufacturerList = array();
+    $modelList = array();
+    $bEditMode = (int)Tools::getValue('edit_mode', 0);
+    if ($bEditMode) {
+      $tecdoc = new TecdocBase();
+
+      $aManufacturers = $tecdoc->getManufacturers();
+      foreach ($aManufacturers as $aManufacturer) {
+        $manufacturerList[] = '<option id="' . $aManufacturer['id'] . '">' . $aManufacturer['name'] . '</option>';
+      }
+      $manufacturerList = implode("\n", $manufacturerList);
+
+      $modelList = $this->getModelOptionList($aManufacturers[0]['id']);
+    }
+//    $this->assignModels();
+
+    // Assign common vars
+    $this->context->smarty->assign(array(
+        'ajaxurl' => _MODULE_DIR_,
+        'errors' => $this->errors,
+        'token' => Tools::getToken(false),
+//        'select_address' => (int)Tools::getValue('select_address'),
+        'car' => $this->_car,
+        'id_car' => (Validate::isLoadedObject($this->_car)) ? $this->_car->id : 0,
+        'edit_mode' => $bEditMode,
+        'manufacturerList' => $manufacturerList,
+        'modelList' => $modelList,
+      ));
+
+    if ($back = Tools::getValue('back'))
+      $this->context->smarty->assign('back', Tools::safeOutput($back));
+    if ($mod = Tools::getValue('mod'))
+      $this->context->smarty->assign('mod', Tools::safeOutput($mod));
+
+    $this->setTemplate(_PS_THEME_DIR_.'car.tpl');
+  }
+  
   /**
    * Process changes on an car
    */
@@ -90,52 +152,70 @@ class CarController extends FrontController
     $this->errors[] = Tools::displayError('An error occurred while updating your car.');
   }
 
-  /**
-   * Assign template vars related to page content
-   * @see FrontController::initContent()
-   */
-  public function initContent()
-  {
-    parent::initContent();
-
-    $manufacturerList = array();
+  protected function getModelOptionList($iManufacturerId, $bOnlyPassenger = true) {
     $modelList = array();
-    $bEditMode = (int)Tools::getValue('edit_mode', 0);
-    if ($bEditMode) {
-      $tecdoc = new TecdocBase();
-
-      $aManufacturers = $tecdoc->getManufacturers();
-      foreach ($aManufacturers as $aManufacturer) {
-        $manufacturerList[] = '<option id="' . $aManufacturer['id'] . '">' . $aManufacturer['name'] . '</option>';
-      }
-      $manufacturerList = implode("\n", $manufacturerList);
-
-      foreach ($tecdoc->getModels($aManufacturers[0]['id']) as $aModel) {
-        $modelList[] = '<option id="' . $aModel['id'] . '">' . $aModel['name'] . '</option>';
-      }
-      $modelList = implode("\n", $modelList);
+    $tecdoc = new TecdocBase();
+    foreach ($tecdoc->getModels($iManufacturerId, $bOnlyPassenger) as $aModel) {
+      $modelList[] = '<option id="' . $aModel['id'] . '">' . $aModel['name'] . '</option>';
     }
-//    $this->assignModels();
-
-    // Assign common vars
-    $this->context->smarty->assign(array(
-      'ajaxurl' => _MODULE_DIR_,
-      'errors' => $this->errors,
-      'token' => Tools::getToken(false),
-//        'select_address' => (int)Tools::getValue('select_address'),
-      'car' => $this->_car,
-      'id_car' => (Validate::isLoadedObject($this->_car)) ? $this->_car->id : 0,
-      'edit_mode' => $bEditMode,
-      'manufacturerList' => $manufacturerList,
-      'modelList' => $modelList,
-    ));
-
-    if ($back = Tools::getValue('back'))
-      $this->context->smarty->assign('back', Tools::safeOutput($back));
-    if ($mod = Tools::getValue('mod'))
-      $this->context->smarty->assign('mod', Tools::safeOutput($mod));
-
-    $this->setTemplate(_PS_THEME_DIR_.'car.tpl');
+    
+    return implode("\n", $modelList);
   }
 
+  protected function getYearOptionList($iModelId) {
+    $tecdoc = new TecdocBase();
+    $aModel = $tecdoc->getModel($iModelId);
+
+    $yearList = array();
+    if (is_array($aModel) && count($aModel)) {
+      for ($i = (int)substr($aModel['start'], 0, 4); $i <= (int)substr($aModel['end'], 0, 4); ++$i) {
+        $yearList[] = '<option id="' . $i . '">' . $i . '</option>';
+      }
+    }
+
+    return implode("\n", $yearList);
+  }
+
+  protected function ajaxGetModels(&$aResult) {
+    $id_manufacturer = (int)Tools::getValue('id_manufacturer', '');
+    if (empty($id_manufacturer)) {
+      $aResult['status'] = 'error';
+      $aResult['error'] = 'incorrect or empty id_manufacturer';
+      
+      return;
+    }
+    
+    $modelOptionList = $this->getModelOptionList($id_manufacturer);
+    if (!is_array($modelOptionList) || !count($modelOptionList)) {
+      $aResult['status'] = 'error';
+      $aResult['error'] = 'incorrect or empty model list';
+
+      return;
+    }
+
+    $aResult['models'] = $modelOptionList;
+  }
+
+  protected function ajaxGetYears(&$aResult) {
+    $id_model = (int)Tools::getValue('id_model', '');
+    if (empty($id_model)) {
+      $aResult['status'] = 'error';
+      $aResult['error'] = 'incorrect or empty id_model';
+
+      return;
+    }
+
+    $yearList = $this->getYearOptionList($id_model);
+    if (empty($yearList)) {
+      if (empty($id_model)) {
+        $aResult['status'] = 'error';
+        $aResult['error'] = 'incorrect or empty id_model';
+
+        return;
+      }
+    }
+
+    $aResult['yearlist'] = $yearList;
+  }
+  
 }

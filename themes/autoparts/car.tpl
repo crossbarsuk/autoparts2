@@ -1,43 +1,49 @@
-{*<script type="text/javascript">
-// <![CDATA[
-var idSelectedCountry = {if isset($smarty.post.id_state)}{$smarty.post.id_state|intval}{else}{if isset($address->id_state)}{$address->id_state|intval}{else}false{/if}{/if};
-var countries = new Array();
-var countriesNeedIDNumber = new Array();
-var countriesNeedZipCode = new Array();
-{foreach from=$countries item='country'}
-	{if isset($country.states) && $country.contains_states}
-		countries[{$country.id_country|intval}] = new Array();
-		{foreach from=$country.states item='state' name='states'}
-			countries[{$country.id_country|intval}].push({ldelim}'id' : '{$state.id_state}', 'name' : '{$state.name|addslashes}'{rdelim});
-		{/foreach}
-	{/if}
-	{if $country.need_identification_number}
-		countriesNeedIDNumber.push({$country.id_country|intval});
-	{/if}
-	{if isset($country.need_zip_code)}
-		countriesNeedZipCode[{$country.id_country|intval}] = {$country.need_zip_code};
-	{/if}
-{/foreach}
-$(function(){ldelim}
-	$('.id_state option[value={if isset($smarty.post.id_state)}{$smarty.post.id_state|intval}{else}{if isset($address->id_state)}{$address->id_state|intval}{/if}{/if}]').attr('selected', true);
-{rdelim});
-{literal}
-	$(document).ready(function() {
-		$('#company').on('input',function(){
-			vat_number();
-		});
-		vat_number();
-		function vat_number()
-		{
-			if ($('#company').val() != '')
-				$('#vat_number').show();
-			else
-				$('#vat_number').hide();
-		}
-	});
-{/literal}
-//]]>
-</script>*}
+{if isset($edit_mode) && $edit_mode == 1}
+<script type="text/javascript">
+function ajaxQuery(params, callbackFunction) {
+  $.ajax({
+    type: 'POST',
+    url: baseDir + 'index.php?controller=car&ajax&' + params,
+    dataType: 'json',
+    success: function(json) {
+      if (json.status == 'ok') {
+        callbackFunction(json);
+      }
+    }
+  });
+}
+
+function changeManufacturer(id_manufacturer) {
+  ajaxQuery('action=getmodels&id_manufacturer=' + id_manufacturer, 'updateModels');
+}
+
+function updateModels(data) {
+  $('#id_model').html(data.models.join(''));
+}
+
+function changeModel(id_model) {
+  ajaxQuery('action=getyears&id_model=' + id_model, 'updateYears');
+}
+
+function updateYears(data) {
+  $('#year').html(data.years.join(''));
+}
+
+$(document).ready(function() {
+  $('#id_manufacturer').onchange(function() {
+    changeManufacturer($(this).val());
+  });
+
+  $('#id_model').onchange(function() {
+    changeModel($(this).val());
+  });
+
+  $('#id_manufacturer').trigger('change');
+});
+
+</script>
+{/if}
+
 
 {capture name=path}{l s='Ваши автомобили'}{/capture}
 {include file="$tpl_dir./breadcrumb.tpl"}
@@ -75,15 +81,15 @@ $(function(){ldelim}
       <select id="id_model" name="id_model">{$modelList}</select>
     </p>
     <p class="required select">
+      <label for="year">{l s='Год выпуска'} <sup>*</sup></label>
+      <select id="year" name="year"></select>
+    </p>
+    <p class="required select">
       <label for="id_mod">{l s='Модификация'} <sup>*</sup></label>
       <select id="id_mod" name="id_mod"></select>
     </p>
     <p class="text">
       <span id="carname"></span>
-    </p>
-    <p class="text">
-      <label for="year">{l s='Год выпуска'}</label>
-      <input type="text" id="year" name="year" value="{if isset($car.year)}{$car.year}{else}{date('Y')}{/if}" />
     </p>
     <p class="text">
       <label for="vin">{l s='VIN'}</label>

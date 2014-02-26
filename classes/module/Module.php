@@ -2157,7 +2157,7 @@ abstract class ModuleCore
 	}
 
   protected function installDirClasses($sDir) {
-    $sPath = $this->local_path . '/' . $sDir;
+    $sPath = $this->local_path . $sDir;
     $dPath = _PS_ROOT_DIR_ . '/' . $sDir;
 
     if (!is_dir($sPath))
@@ -2174,7 +2174,7 @@ abstract class ModuleCore
   }
 
   protected function uninstallDirClasses($sDir) {
-    $sPath = dirname(__FILE__) . '/' . $sDir;
+    $sPath = $this->local_path . $sDir;
     $dPath = _PS_ROOT_DIR_ . '/' . $sDir;
 
     if (!is_dir($sPath))
