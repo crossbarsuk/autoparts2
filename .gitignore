@@ -1,9 +1,0 @@
-config/settings.inc.php
-config/defines.inc.php
-override/
-!modules/**/override
-cache/
-config/xml
-log
-img/
-!modules/**/img
