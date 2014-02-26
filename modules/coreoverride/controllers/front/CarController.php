@@ -1,12 +1,10 @@
 <?php
 
-require_once(_PS_MODULE_DIR_ . 'coreoverride/classes/Car.php');
-
 class CarController extends FrontController
 {
   public function setMedia() {
+    $this->addCSS(_THEME_CSS_DIR_ . 'car.css');
     parent::setMedia();
-//    $this->addJS(_THEME_JS_DIR_.'tools/statesManagement.js');
   }
 
   /**
@@ -44,7 +42,7 @@ class CarController extends FrontController
    */
   public function postProcess() {
     if (Tools::isSubmit('submitCar'))
-      $this->processSubmitAddress();
+      $this->processSubmitCar();
     
   }
 

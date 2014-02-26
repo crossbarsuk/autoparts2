@@ -16,6 +16,9 @@ class Car extends ObjectModel {
   public $vim;
   public $year;
   public $id_customer;
+  public $id_model;
+  public $id_manufacturer;
+  public $id_mod;
   public $active = 1;
 
   public static $definition = array(
@@ -26,6 +29,9 @@ class Car extends ObjectModel {
       'vim' =>	array('type' => self::TYPE_STRING, 'validate' => 'isMessage'),
       'year' =>	array('type' => self::TYPE_STRING, 'validate' => 'isInt'),
       'id_customer' =>	array('type' => self::TYPE_STRING, 'validate' => 'isInt'),
+      'id_manufacturer' =>	array('type' => self::TYPE_STRING, 'validate' => 'isInt'),
+      'id_model' =>	array('type' => self::TYPE_STRING, 'validate' => 'isInt'),
+      'id_mod' =>	array('type' => self::TYPE_STRING, 'validate' => 'isInt'),
       'active' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool', 'required' => true),
       'deleted' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool', 'required' => true),
     ),

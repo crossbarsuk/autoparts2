@@ -30,7 +30,8 @@ class CoreOverride extends Module
 			parent::install() == false
 //			|| $this->registerHook('top') == false
 			|| $this->registerHook('header') == false
-      || !$this->installControllers()
+      || !$this->installClasses()
+      || !$this->addCarDB()
 //			|| $this->registerHook('displayTop') == false
 //			|| $this->registerHook('leftColumn') == false
 //			|| $this->registerHook('rightColumn') == false
@@ -41,7 +42,7 @@ class CoreOverride extends Module
 
   public function uninstall()
   {
-    if (!$this->uninstallControllers() ||
+    if (!$this->uninstallClasses() ||
       !parent::uninstall()) {
       return false;
     }
@@ -66,61 +67,64 @@ class CoreOverride extends Module
 //			$this->context->controller->addJS(($this->_path).'ajaxloginform.js');
 	}
 
-  protected function installControllers() {
-    $this->_installControllers('front');
-//    $this->_installControllers('admin');
+  protected function installClasses() {
+    return ($this->_installClasses('controllers/front')
+    && $this->_installClasses('classes'));
+//    $this->_installControllers('controllers/admin');
   }
 
-  protected function _installControllers($sType) {
-    $sPath = dirname(__FILE__) . '/controllers/';
-    $dPath = _PS_ROOT_DIR_ . '/controllers/';
-    if ($handle = opendir($sPath . $sType)) {
-      while (false !== ($filename = readdir($handle))) {
-        $ext = substr(strrchr($filename, '.'), 1);
-        if ($filename != "." && $filename != ".." && $ext == "php") {
-          copy($sPath . $sType .'/' . $filename, $dPath . $sType .'/' . $filename);
-        }
-      } // while (false !== ($filename = readdir($handle)))
-      closedir($handle);
+  protected function _installClasses($sDir) {
+    $sPath = dirname(__FILE__) . '/' . $sDir;
+    $dPath = _PS_ROOT_DIR_ . '/' . $sDir;
+    
+    if (!is_dir($sPath))
+      return true;
+
+    foreach (Tools::scandir($sPath, 'php', '', true) as $file) {
+      copy($sPath .'/' . $file, $dPath .'/' . $file);
     }
     
+    // Re-generate the class index
+    Autoload::getInstance()->generateIndex();
+
     return true;
   }
 
-  protected function uninstallControllers() {
-    $this->_uninstallControllers('front');
+  protected function uninstallClasses() {
+    return $this->_uninstallClasses('front');
 //    $this->_uninstallControllers('admin');
   }
   
-  protected function _uninstallControllers($sType) {
-    $sPath = dirname(__FILE__) . '/controllers/';
-    $dPath = _PS_ROOT_DIR_ . '/controllers/';
-    if ($handle = opendir($sPath . $sType)) {
-      while (false !== ($filename = readdir($handle))) {
-        $ext = substr(strrchr($filename, '.'), 1);
-        if ($filename != "." && $filename != ".." && $ext == "php") {
-          unlink($dPath . $sType .'/' . $filename);
-        }
-      } // while (false !== ($filename = readdir($handle)))
-      closedir($handle);
+  protected function _uninstallClasses($sDir) {
+    $sPath = dirname(__FILE__) . '/' . $sDir;
+    $dPath = _PS_ROOT_DIR_ . '/' . $sDir;
+
+    foreach (Tools::scandir($sPath, 'php', '', true) as $file) {
+      unlink($dPath .'/' . $file);
     }
+
+    // Re-generate the class index
+    Autoload::getInstance()->generateIndex();
 
     return true;
   }
-
+  
   protected function addCarDB() {
-    $sTable = Db::getInstance()->executeS("SHOW TABLES LIKE `"._DB_PREFIX_."customer_car`");
+    $sTable = Db::getInstance()->executeS("SHOW TABLES LIKE '"._DB_PREFIX_."customer_car'");
     if (empty($sTable)) {
       Db::getInstance()->execute('
         CREATE TABLE `'._DB_PREFIX_.'customer_car` (
           `id_car` INT NOT NULL AUTO_INCREMENT,
           `name` VARCHAR(255) NOT NULL,
-          `vim` VARCHAR(255) NOT NULL,
+          `vin` VARCHAR(255) NOT NULL,
           `year` SMALLINT(4) NOT NULL,
           `id_customer` INT NOT NULL,
+          `id_manufacturer` INT NOT NULL,
+          `id_model` INT NOT NULL,
+          `id_mod` INT NOT NULL,
           `active` TINYINT(1) NOT NULL DEFAULT 1,
           `deleted` TINYINT(1) NOT NULL DEFAULT 0,
-          PRIMARY KEY (`id_display_position`)
+          PRIMARY KEY (`id_car`)
         ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;
       ');
     }

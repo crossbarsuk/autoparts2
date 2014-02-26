@@ -1,0 +1,13 @@
+#car #columns #right_column {
+  display: none;
+}
+
+
+.cars {
+  overflow: hidden;
+}
+
+.car_head {
+  margin: 15px 0 10px;
+}
+
