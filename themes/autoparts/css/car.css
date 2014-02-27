@@ -11,15 +11,27 @@
   margin: 15px 0 10px;
 }
 
-#car p {
+#car #center_column p {
   float: left;
   width: 100%;
 }
 
-#car p .jq-selectbox-wrapper, #car p label {
+#car #center_column p .jq-selectbox-wrapper {
   float: left;
+  width: 170px;
 }
 
-#car p label {
+
+#car #center_column p label {
+  float: left;
   width: 162px;
+}
+
+#car #center_column p select {
+  width: 170px;
+}
+
+#car #center_column p input[type=text] {
+  width: 160px;
+  margin-left: 0px;
 }

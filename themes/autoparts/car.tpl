@@ -1,12 +1,14 @@
-{if isset($edit_mode) && $edit_mode == 1}
 <script type="text/javascript">
+var editUrl = '{$link->getPageLink('car', null, null, 'edit_mode=1&id_car=')}';
+var deleteUrl = '{$link->getPageLink('car', null, null, 'edit_mode=1&delete&id_car=')}';
+var id_car = '{if isset($car->id_car)}{$car->id_car}{else}0{/if}';
+  
 function ajaxQuery(params, callbackFunction) {
   $.ajax({
     type: 'POST',
     url: baseDir + 'index.php?controller=car&ajax&' + params,
     dataType: 'json',
     success: function(data) {
-      console.log(data);
       if (data.status == 'ok') {
         callbackFunction(data);
       }
@@ -17,21 +19,42 @@ function ajaxQuery(params, callbackFunction) {
 var updateModels = function(data) {
   $('#id_model').html(data.models);
   $('#id_model').trigger('refresh');
+  $('#id_model').trigger('change');
 }
 
 var updateYears = function(data) {
+  console.log(data);
   $('#year').html(data.years);
+  $('#year').trigger('refresh');
+  updateName();
+}
+
+var updateCar = function(data) {
+  $('#carname').text(data.car.name);
+  $('#vin').text(data.car.vin);
+  $('#year').text(data.car.year);
+  $('#linkEdit').prop('href', editUrl + data.car.id_car);
+  $('#linkDelete').prop('href', deleteUrl + data.car.id_car);
 }
 
 function changeManufacturer(id_manufacturer) {
-  ajaxQuery('action=getmodels&id_manufacturer=' + id_manufacturer, updateModels);
+  ajaxQuery('action=getmodels&id_car=' + id_car + '&id_manufacturer=' + id_manufacturer, updateModels);
 }
 
 function changeModel(id_model) {
-  ajaxQuery('action=getyears&id_model=' + id_model, updateYears);
+  ajaxQuery('action=getyears&id_car=' + id_car + '&id_model=' + id_model, updateYears);
 }
 
+function updateName() {
+  var name = $('#id_manufacturer > option:selected').text() + ' ' + $('#id_model > option:selected').text();
+  
+  $('#carname').html(name + ' ' + $('#year > option:selected').text() + ' {l s='г'}');
+  $('#name').val(name);
+}
 
+function changeCar(id_car) {
+  ajaxQuery('action=getcar&id_car=' + id_car, updateCar);
+}
 
 $(document).ready(function() {
   $('#id_manufacturer').change(function() {
@@ -42,13 +65,22 @@ $(document).ready(function() {
     changeModel($(this).val());
   });
 
+  $('#year').change(function() {
+    updateName();
+  });
+
+  $('#id_car').change(function() {
+    changeCar($(this).val());
+  });
+
+  $('#id_manufacturer').trigger('refresh');
   $('#id_manufacturer').trigger('change');
-  $('#id_model').trigger('change');
+//  $('#id_model').trigger('refresh');
+//  $('#id_model').trigger('change');
+//  $('#id_car').trigger('refresh');
+  $('#id_car').trigger('change');
 });
-
 </script>
-{/if}
-
 
 {capture name=path}{l s='Ваши автомобили'}{/capture}
 {include file="$tpl_dir./breadcrumb.tpl"}
@@ -57,10 +89,10 @@ $(document).ready(function() {
 
 {if isset($edit_mode) && $edit_mode}
 <h3>
-  {if isset($id_car)}
+  {if isset($car->id_car)}
     {l s='Изменить автомобиль'}
-    {if isset($car.name)}
-      "{$car.name|escape:'html'}"
+    {if isset($car->name)}
+      "{$car->name|escape:'html'}"
     {/if}
   {else}
     {l s='Чтобы добавить автомобиль, заполните форму ниже.'}
@@ -83,27 +115,28 @@ $(document).ready(function() {
 		</p>
     <p class="required select">
       <label for="id_model">{l s='Модель'} <sup>*</sup></label>
-      <select id="id_model" name="id_model">{$modelList}</select>
+      <select id="id_model" name="id_model"></select>
     </p>
     <p class="required select">
       <label for="year">{l s='Год выпуска'} <sup>*</sup></label>
       <select id="year" name="year"></select>
     </p>
-    <p class="required select">
+    {*<p class="required select">
       <label for="id_mod">{l s='Модификация'} <sup>*</sup></label>
       <select id="id_mod" name="id_mod"></select>
-    </p>
+    </p>*}
     <p class="text">
       <span id="carname"></span>
+      <input type="hidden" id="name" name="name" value=""/>
     </p>
     <p class="text">
       <label for="vin">{l s='VIN'}</label>
-      <input type="text" id="vin" name="vin" value="{if isset($car.vin)}{$car.vin}{/if}" />
+      <input type="text" id="vin" name="vin" value="{if isset($car->vin)}{$car->vin}{/if}" />
     </p>
 		
 	</fieldset>
 	<p class="submit2">
-		{if isset($id_car)}<input type="hidden" name="id_car" value="{$id_car|intval}"/>{/if}
+		{if isset($car->id_car)}<input type="hidden" name="id_car" value="{$car->id_car|intval}"/>{/if}
 		{if isset($back)}<input type="hidden" name="back" value="{$back}"/>{/if}
 		{if isset($mod)}<input type="hidden" name="mod" value="{$mod}"/>{/if}
 		<input type="hidden" name="token" value="{$token}" />		
@@ -111,26 +144,16 @@ $(document).ready(function() {
 	</p>
 </form>
 {else}
-  <div class="car_head">
-    <select id="car" name="car" style="position: absolute; opacity: 0; height: 27px;">
-      <option>Mazda Mazda 6 универсал</option>
-      <option>Mazda Mazda 6 универсал</option>
-      <option>Mazda Mazda 6 универсал</option>
-      <option>Mazda Mazda 6 универсал</option>
-    </select>
-  </div>
+  <p class="car_head">
+    <select id="id_car" name="id_car">{$carList}</select>
+  </p>
   <div class="car">
-    <a href="#">
-              <span>
-                  <img alt="mazda 6" src="img/car1.png">
-              </span>
-      Mazda Mazda 6 универсал I 2.0 CiTD 4WD</a>
-    <p>VIN: JMZGY19R241141858
-      <br> 2003 г.</p>
+    <a href="#"><span><img alt="mazda 6" src="img/car1.png"></span><span id="carname"></span></a>
+    <p>VIN: <span id="vin"></span><br><span id="year"></span></p>
     <div class="car_control">
-      <a title="Характеристики" href="#" class="car_characteristics">Characteristics</a>
-      <a title="Изменить" href="#" class="car_edit">Edit</a>
-      <a title="Удалить" href="#" class="car_del">Delete</a>
+      <a {*id=""*} title="Характеристики" href="#" class="car_characteristics">{l s='Характеристики'}</a>
+      <a id="linkEdit" title="Изменить" href="#" class="car_edit">{l s='Изменить'}</a>
+      <a id="linkDelete" title="Удалить" href="#" class="car_del">{l s='Удалить'}</a>
     </div>
   </div>
   <div class="car_inf">

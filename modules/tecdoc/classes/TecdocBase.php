@@ -74,38 +74,44 @@ class TecdocBase {
 
     return $list;
   }
-
+  
   public function getModels($iManufacturerId, $bOnlyPassenger = true) {
+    return $this->_getModels($iManufacturerId, $bOnlyPassenger, false);
+  }
+
+  public function getModel($iModelId) {
+    $aModels = $this->_getModels($iModelId);
+    
+    return is_array($aModels) && count($aModels) ? reset($aModels) : false;
+  }
+
+  protected function _getModels($iId, $bOnlyPassenger = true, $bByModelId = true) {
     $list = array();
 
     $sql = new TecdocQuery();
     $sql->select('DISTINCT md.MOD_ID AS id, tex.TEX_TEXT AS name, md.MOD_PCON_START AS start, md.MOD_PCON_END AS end');
     $sql->from('MODELS', 'md');
-    $sql->innerJoin('COUNTRY_DESIGNATIONS', 'cds', '(cds.CDS_ID = md.MOD_CDS_ID)');
+    $sql->innerJoin('COUNTRY_DESIGNATIONS', 'cds', '(cds.CDS_ID = md.MOD_CDS_ID AND (cds.CDS_LNG_ID = ' . TECDOC_LANG_ID .' OR cds.CDS_LNG_ID = 255))');
     $sql->innerJoin('DES_TEXTS', 'tex', '(tex.TEX_ID = cds.CDS_TEX_ID)');
-    $sql->where('md.MOD_MFA_ID = ' . $iManufacturerId . ($bOnlyPassenger ? ' AND md.MOD_PC = 1' : ''));
+    if ($bByModelId) {
+      $sql->where('md.MOD_ID = ' . $iId);
+    } else {
+      $sql->where('md.MOD_MFA_ID = ' . $iId);
+    }
+    if ($bOnlyPassenger) {
+      $sql->where('md.MOD_PC = 1');
+    }
     $sql->orderBy('name ASC, id ASC');
 
     $pRes = $this->_dbLink->query($sql->build());
     while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
-      $list[] = $aRow;
+      if (!isset($list[$aRow['id']])) {
+        $list[$aRow['id']] = $aRow;
+      }
     }
 
     return $list;
   }
-
-  public function getModel($iModelId) {
-    $sql = new TecdocQuery();
-    $sql->select('DISTINCT md.MOD_ID AS id, tex.TEX_TEXT AS name, md.MOD_PCON_START AS start, md.MOD_PCON_END AS end');
-    $sql->from('MODELS', 'md');
-    $sql->innerJoin('COUNTRY_DESIGNATIONS', 'cds', '(cds.CDS_ID = md.MOD_CDS_ID)');
-    $sql->innerJoin('DES_TEXTS', 'tex', '(tex.TEX_ID = cds.CDS_TEX_ID)');
-    $sql->where('md.MOD_ID = ' . $iModelId);
-
-    return $this->_dbLink->getRow($sql->build());
-  }
-  
-  
 
   /**
    * Get text of description by DES_ID

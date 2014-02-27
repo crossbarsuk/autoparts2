@@ -1,7 +1,11 @@
 <?php
 
-class CarController extends FrontController
-{
+class CarController extends FrontController {
+  
+  protected $_bEditMode = 0;
+  protected $_car = null;
+  protected $_id_car = 0;
+
   public function setMedia() {
     $this->addCSS(_THEME_CSS_DIR_ . 'car.css');
     parent::setMedia();
@@ -14,6 +18,13 @@ class CarController extends FrontController
   public function init() {
     parent::init();
 
+    $this->_id_car = (int)Tools::getValue('id_car', 0);
+    if ($this->_id_car && Car::customerHasCar($this->_id_car)) {
+      $this->_car = new Car($this->_id_car);
+    } else {
+      $this->_car = new Car();
+    }
+    
     if ($this->ajax) {
       $aResult = array(
         'status' => 'ok',
@@ -33,20 +44,18 @@ class CarController extends FrontController
         case 'getyears' :
           $this->ajaxGetYears($aResult);
           break;
+        case 'getcar' :
+          $this->ajaxGetCar($aResult);
+          break;
       }
 
       die(Tools::jsonEncode($aResult));
     }
-    
-    
-    // Get car ID
-    $id_car = (int)Tools::getValue('id_car', 0);
 
-    // Initialize car
-    if ($id_car)
-    {
-      $this->_car = new Car($id_car);
-      if (Validate::isLoadedObject($this->_car) && Car::customerHasCar($this->context->customer->id, $id_car)) {
+    $this->_bEditMode = (int)Tools::getValue('edit_mode', 0);
+    if ($this->_bEditMode) {
+      // Initialize car
+      if (Validate::isLoadedObject($this->_car) && Car::customerHasCar($this->_id_car)) {
         if (Tools::isSubmit('delete')) {
           if ($this->_car->delete()) {
             Tools::redirect('index.php?controller=cars');
@@ -56,7 +65,6 @@ class CarController extends FrontController
       } else {
         Tools::redirect('index.php?controller=cars');
       }
-        
     }
   }
 
@@ -74,34 +82,26 @@ class CarController extends FrontController
   {
     parent::initContent();
 
-    $manufacturerList = array();
-    $modelList = array();
-    $bEditMode = (int)Tools::getValue('edit_mode', 0);
-    if ($bEditMode) {
-      $tecdoc = new TecdocBase();
+    if ($this->_bEditMode) {
+      $manufacturerList = $this->getManufacturerOptionList();
 
-      $aManufacturers = $tecdoc->getManufacturers();
-      foreach ($aManufacturers as $aManufacturer) {
-        $manufacturerList[] = '<option value="' . $aManufacturer['id'] . '">' . $aManufacturer['name'] . '</option>';
-      }
-      $manufacturerList = implode("\n", $manufacturerList);
-
-      $modelList = $this->getModelOptionList($aManufacturers[0]['id']);
+      $this->context->smarty->assign(array(
+        'errors' => $this->errors,
+        'car' => Validate::isLoadedObject($this->_car) ? $this->_car : '',
+        'manufacturerList' => $manufacturerList,
+      ));
+      
+    } else {
+      $carList = $this->getCarOptionList();
+      $this->context->smarty->assign('carList', $carList);
     }
-//    $this->assignModels();
 
     // Assign common vars
     $this->context->smarty->assign(array(
-        'ajaxurl' => _MODULE_DIR_,
-        'errors' => $this->errors,
-        'token' => Tools::getToken(false),
-//        'select_address' => (int)Tools::getValue('select_address'),
-        'car' => $this->_car,
-        'id_car' => (Validate::isLoadedObject($this->_car)) ? $this->_car->id : 0,
-        'edit_mode' => $bEditMode,
-        'manufacturerList' => $manufacturerList,
-        'modelList' => $modelList,
-      ));
+      'ajaxurl' => _MODULE_DIR_,
+      'token' => Tools::getToken(false),
+      'edit_mode' => $this->_bEditMode,
+    ));
 
     if ($back = Tools::getValue('back'))
       $this->context->smarty->assign('back', Tools::safeOutput($back));
@@ -116,23 +116,22 @@ class CarController extends FrontController
    */
   protected function processSubmitCar()
   {
-    $car = new Car();
-    $this->errors = $car->validateController();
-    $car->id_customer = (int)$this->context->customer->id;
+    $this->errors = $this->_car->validateController();
+    $this->_car->id_customer = (int)$this->context->customer->id;
 
     // Check page token
     if ($this->context->customer->isLogged() && !$this->isTokenValid())
       $this->errors[] = Tools::displayError('Invalid token.');
 
     // Check the requires fields which are settings in the BO
-    $this->errors = array_merge($this->errors, $car->validateFieldsRequiredDatabase());
+    $this->errors = array_merge($this->errors, $this->_car->validateFieldsRequiredDatabase());
 
     // Don't continue this process if we have errors !
     if ($this->errors && !$this->ajax)
       return;
 
     // Save car
-    if ($result = $car->save()) {
+    if ($result = $this->_car->save()) {
       if ($this->ajax) {
         $return = array(
           'hasError' => (bool)$this->errors,
@@ -150,29 +149,46 @@ class CarController extends FrontController
         Tools::redirect('index.php?controller='.$back.($mod ? '&back='.$mod : ''));
       }
       else
-        Tools::redirect('index.php?controller=cars');
+        Tools::redirect('index.php?controller=car');
     }
     $this->errors[] = Tools::displayError('An error occurred while updating your car.');
   }
 
   protected function getModelOptionList($iManufacturerId, $bOnlyPassenger = true) {
+    $id_model = is_object($this->_car) && !empty($this->_car->id_model) ? $this->_car->id_model : 0;
+    
     $modelList = array();
     $tecdoc = new TecdocBase();
     foreach ($tecdoc->getModels($iManufacturerId, $bOnlyPassenger) as $aModel) {
-      $modelList[] = '<option value="' . $aModel['id'] . '">' . $aModel['name'] . '</option>';
+      $modelList[] = '<option value="' . $aModel['id'] . '"' . ($id_model == $aModel['id'] ? ' selected="selected"' : '') . '>' . $aModel['name'] . '</option>';
     }
     
     return implode("\n", $modelList);
   }
 
+  protected function getManufacturerOptionList($bOnlyPassenger = true) {
+    $id_manufacturer = is_object($this->_car) && !empty($this->_car->id_manufacturer) ? $this->_car->id_manufacturer : 0;
+
+    $list = array();
+    $tecdoc = new TecdocBase();
+    foreach ($tecdoc->getManufacturers($bOnlyPassenger) as $aManufacturer) {
+      $list[] = '<option value="' . $aManufacturer['id'] . '"' . ($id_manufacturer == $aManufacturer['id'] ? ' selected="selected"' : '') . '>' . $aManufacturer['name'] . '</option>';
+    }
+
+    return implode("\n", $list);
+  }
+
   protected function getYearOptionList($iModelId) {
+    $year = is_object($this->_car) && !empty($this->_car->year) ? $this->_car->year : 0;
+    
     $tecdoc = new TecdocBase();
     $aModel = $tecdoc->getModel($iModelId);
 
     $yearList = array();
     if (is_array($aModel) && count($aModel)) {
-      for ($i = (int)substr($aModel['start'], 0, 4); $i <= (int)substr($aModel['end'], 0, 4); ++$i) {
-        $yearList[] = '<option value="' . $i . '">' . $i . '</option>';
+      $iEnd = !empty($aModel['end']) ? (int)substr($aModel['end'], 0, 4) : (int)date('Y');
+      for ($i = (int)substr($aModel['start'], 0, 4); $i <= $iEnd; ++$i) {
+        $yearList[] = '<option value="' . $i . '"' . ($year == $i ? ' selected="selected"' : '') . '>' . $i . '</option>';
       }
     }
 
@@ -216,7 +232,40 @@ class CarController extends FrontController
       return;
     }
 
-    $aResult['yearlist'] = $yearList;
+    $aResult['years'] = $yearList;
+  }
+
+  protected function ajaxGetCar(&$aResult) {
+    $id_car = (int)Tools::getValue('id_car', '');
+    if (empty($id_car)) {
+      $aResult['status'] = 'error';
+      $aResult['error'] = 'incorrect or empty id_car';
+
+      return;
+    }
+
+    $car = new Car($id_car);
+    if (!is_object($car)) {
+      $aResult['status'] = 'error';
+      $aResult['error'] = 'incorrect or empty id_car';
+
+      return;
+    }
+
+    $aResult['car'] = array(
+      'id_car' => $car->id,
+      'name' => $car->name,
+      'vin' => $car->vin,
+      'year' => $car->year,
+    );
   }
   
+  protected function getCarOptionList() {
+    $list = array();
+    foreach (Car::getCustomerCars() as $aCar) {
+      $list[] = '<option value="' . $aCar['id_car'] . '">' . $aCar['name'] . '</option>';
+    }
+
+    return implode("\n", $list);
+  }
 }
