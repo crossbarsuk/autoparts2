@@ -67,9 +67,10 @@ class TecdocBase {
     }
     $sql->orderBy('MFA_BRAND');
 
-    $pRes = $this->_dbLink->query($sql->build());
-    while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
-      $list[] = $aRow;
+    if (($pRes = $this->_dbLink->query($sql->build()))) {
+      while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
+        $list[] = $aRow;
+      }
     }
 
     return $list;
@@ -103,10 +104,11 @@ class TecdocBase {
     }
     $sql->orderBy('name ASC, id ASC');
 
-    $pRes = $this->_dbLink->query($sql->build());
-    while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
-      if (!isset($list[$aRow['id']])) {
-        $list[$aRow['id']] = $aRow;
+    if (($pRes = $this->_dbLink->query($sql->build()))) {
+      while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
+        if (!isset($list[$aRow['id']])) {
+          $list[$aRow['id']] = $aRow;
+        }
       }
     }
 
@@ -115,7 +117,6 @@ class TecdocBase {
 
   /**
    * Get text of description by DES_ID
-   * 
    * @param $desId - DES_ID
    */
   protected function getDesText($desId) {
@@ -136,41 +137,42 @@ class TecdocBase {
     $sql->innerJoin(TECDOC_PREFIX . 'ARTICLES', 'art', '(artcri.ACR_ART_ID = art.ART_ID)');
     $sql->where("art.ART_ARTICLE_NR = '" . $article . "'");
 
-    $pRes = $this->_dbLink->query($sql->build());
     $criteriaList = array();
-    while (($artCriRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
-      if (/*$artCriRow['CRI_TYPE'] == 'A' && */$artCriRow['ACR_DISPLAY'] == 0) {
-        continue;
+    if (($pRes = $this->_dbLink->query($sql->build()))) {
+      while (($artCriRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
+        if (/*$artCriRow['CRI_TYPE'] == 'A' && */$artCriRow['ACR_DISPLAY'] == 0) {
+          continue;
+        }
+  
+        $optName = $this->getDesText($artCriRow['CRI_DES_ID']);
+        $optValue = !empty($artCriRow['ACR_KV_DES_ID']) ? $this->getDesText($artCriRow['ACR_KV_DES_ID']) : $artCriRow['ACR_VALUE'];
+  
+        /*switch ($artCriRow['CRI_TYPE']) {
+          case 'A':
+  
+            break;
+          case 'B':
+  
+            break;
+          case 'D':
+  
+            break;
+          case 'K':
+            
+            break;
+          case 'N':
+  
+            break;
+          case 'V':
+  
+            break;
+        }*/
+  
+        $criteriaList[] = array(
+          'option' => $optName,
+          'value' => $optValue,
+        );
       }
-
-      $optName = $this->getDesText($artCriRow['CRI_DES_ID']);
-      $optValue = !empty($artCriRow['ACR_KV_DES_ID']) ? $this->getDesText($artCriRow['ACR_KV_DES_ID']) : $artCriRow['ACR_VALUE'];
-
-      /*switch ($artCriRow['CRI_TYPE']) {
-        case 'A':
-
-          break;
-        case 'B':
-
-          break;
-        case 'D':
-
-          break;
-        case 'K':
-          
-          break;
-        case 'N':
-
-          break;
-        case 'V':
-
-          break;
-      }*/
-
-      $criteriaList[] = array(
-        'option' => $optName,
-        'value' => $optValue,
-      );
     }
 
     return $criteriaList;
@@ -220,11 +222,13 @@ class TecdocBase {
     $sql->innerJoin('LINK_ART_GA', 'la', '(la.LAG_ART_ID = art.ART_ID)');
     $sql->innerJoin('GENERIC_ARTICLES', 'ga', '(ga.GA_ID = la.LAG_GA_ID)');
     $sql->where("art.ART_ARTICLE_NR = '" . $article . "'");
-    $pRes = $this->_dbLink->query($sql->build());
-    while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
-      $sCatName = $this->getDesText($aRow['des_id']);
-      if (!empty($sCatName)) {
-        $aCatList[] = $sCatName;
+    
+    if (($pRes = $this->_dbLink->query($sql->build()))) {
+      while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
+        $sCatName = $this->getDesText($aRow['des_id']);
+        if (!empty($sCatName)) {
+          $aCatList[] = $sCatName;
+        }
       }
     }
     
@@ -252,30 +256,31 @@ class TecdocBase {
     $sql->innerJoin('ARTICLES', 'art', '(art.ART_ID = lga.LGA_ART_ID)');
     $sql->where("art.ART_ARTICLE_NR = '" . $article . "'");
 //    $sql->orderBy("gra.GRA_TAB_NR");
-    $pRes = $this->_dbLink->query($sql->build());
-    while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
-      $sql = new TecdocQuery();
-      $sql->select('GRD_GRAPHIC');
-      $sql->from('GRA_DATA_' . $aRow['GRA_TAB_NR'], 'gd');
-      $sql->where("gd.GRD_ID = '" . $aRow['GRA_GRD_ID'] . "'");
-      $sImage = $this->_dbLink->getValue($sql->build());
-      
-      if (!empty($sImage)) {
-        $sFileName = _PS_ROOT_DIR_ . '/img_import/' . $aRow['GRA_GRD_ID'];
-        $sFileExt = '.' . strtolower($aRow['DOC_EXTENSION']);
-        $sImageUrl = _PS_BASE_URL_ . '/img_import/' . $aRow['GRA_GRD_ID'];
-        file_put_contents($sFileName . $sFileExt, $sImage);
-        if ($aRow['DOC_EXTENSION'] == 'JP2') { //convert JP2 to BMP
-          shell_exec('j2k_to_image -i "' . $sFileName . '.jp2" -o "' . $sFileName . '.bmp"');
-          $sFileExt = '.bmp';
-          unlink($sFileName . '.jp2');
+    if (($pRes = $this->_dbLink->query($sql->build()))) {
+      while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
+        $sql = new TecdocQuery();
+        $sql->select('GRD_GRAPHIC');
+        $sql->from('GRA_DATA_' . $aRow['GRA_TAB_NR'], 'gd');
+        $sql->where("gd.GRD_ID = '" . $aRow['GRA_GRD_ID'] . "'");
+        $sImage = $this->_dbLink->getValue($sql->build());
+        
+        if (!empty($sImage)) {
+          $sFileName = _PS_ROOT_DIR_ . '/img_import/' . $aRow['GRA_GRD_ID'];
+          $sFileExt = '.' . strtolower($aRow['DOC_EXTENSION']);
+          $sImageUrl = _PS_BASE_URL_ . '/img_import/' . $aRow['GRA_GRD_ID'];
+          file_put_contents($sFileName . $sFileExt, $sImage);
+          if ($aRow['DOC_EXTENSION'] == 'JP2') { //convert JP2 to BMP
+            shell_exec('j2k_to_image -i "' . $sFileName . '.jp2" -o "' . $sFileName . '.bmp"');
+            $sFileExt = '.bmp';
+            unlink($sFileName . '.jp2');
+          }
+          if (in_array($aRow['DOC_EXTENSION'], array('BMP', 'JP2', 'JPG'))) { //convert to PNG
+            shell_exec('convert "' . $sFileName . $sFileExt . '" "' . $sFileName . '.png"');
+            unlink($sFileName . '.bmp');
+          }
+  
+          $imageList[] = $sImageUrl . '.png';
         }
-        if (in_array($aRow['DOC_EXTENSION'], array('BMP', 'JP2', 'JPG'))) { //convert to PNG
-          shell_exec('convert "' . $sFileName . $sFileExt . '" "' . $sFileName . '.png"');
-          unlink($sFileName . '.bmp');
-        }
-
-        $imageList[] = $sImageUrl . '.png';
       }
     }
     
@@ -295,13 +300,11 @@ class TecdocBase {
     $sql->where("art.ART_ARTICLE_NR = '" . $article . "' AND arl.ARL_KIND IN (2, 3, 4)");
     $sql->orderBy("arl.ARL_KIND, bra.BRA_BRAND, arl.ARL_DISPLAY_NR");
     $sql->limit(50);
-    $pRes = $this->_dbLink->query($sql->build());
-    while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
-      $list[] = $aRow;
-    }
-
-   
     
+    if (($pRes = $this->_dbLink->query($sql->build()))) {
+      while (($aRow = $pRes->fetch(PDO::FETCH_ASSOC))) {
+        $list[] = $aRow;
+      }
+    }
   }
-  
 } 

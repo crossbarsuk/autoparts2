@@ -5,9 +5,14 @@ class CarController extends FrontController {
   protected $_bEditMode = 0;
   protected $_car = null;
   protected $_id_car = 0;
+  protected $_bCustomerHasCar = false;
+  protected $_ajaxResult = array('status' => 'ok',);
 
   public function setMedia() {
     $this->addCSS(_THEME_CSS_DIR_ . 'car.css');
+    $this->addJQuery();
+    $this->addJQueryUI('ui.dialog');
+    $this->addJQueryUI('ui.button');
     parent::setMedia();
   }
 
@@ -19,22 +24,19 @@ class CarController extends FrontController {
     parent::init();
 
     $this->_id_car = (int)Tools::getValue('id_car', 0);
-    if ($this->_id_car && Car::customerHasCar($this->_id_car)) {
+    if ($this->_id_car) {
+      $this->_bCustomerHasCar = Car::customerHasCar($this->_id_car);
+    }
+    if ($this->_id_car && $this->_bCustomerHasCar) {
       $this->_car = new Car($this->_id_car);
     } else {
       $this->_car = new Car();
     }
     
     if ($this->ajax) {
-      $aResult = array(
-        'status' => 'ok',
-      );
-
       $action = Tools::getValue('action', '');
       if (empty($action)) {
-        $aResult['status'] = 'error';
-        $aResult['error'] = 'incorrect or empty action';
-        die(Tools::jsonEncode($aResult));
+        $this->ajaxError('incorrect or empty action');
       }
 
       switch ($action) {
@@ -48,7 +50,14 @@ class CarController extends FrontController {
           $this->ajaxGetYears($aResult);
           break;
         case 'getcar' :
+          $this->checkAjaxCustomerCar();
           $this->ajaxGetCar($aResult);
+          break;
+        case 'deletecar' :
+          $this->checkAjaxCustomerCar();
+          if (!$this->_car->delete()) {
+            $this->ajaxError('This car cannot be deleted.');
+          }
           break;
       }
 
@@ -223,18 +232,12 @@ class CarController extends FrontController {
   protected function ajaxGetCar(&$aResult) {
     $id_car = (int)Tools::getValue('id_car', '');
     if (empty($id_car)) {
-      $aResult['status'] = 'error';
-      $aResult['error'] = 'incorrect or empty id_car';
-
-      return;
+      $this->ajaxError('incorrect or empty id_car');
     }
 
     $car = new Car($id_car);
     if (!is_object($car)) {
-      $aResult['status'] = 'error';
-      $aResult['error'] = 'incorrect or empty id_car';
-
-      return;
+      $this->ajaxError('incorrect or empty id_car');
     }
 
     $manufacturer = Car::getCarManufacturer($car->id);
@@ -271,18 +274,12 @@ class CarController extends FrontController {
   protected function ajaxGetTypes(&$aResult) {
     $id_model = (int)Tools::getValue('id_model', '');
     if (empty($id_model)) {
-      $aResult['status'] = 'error';
-      $aResult['error'] = 'incorrect or empty id_model';
-
-      return;
+      $this->ajaxError('incorrect or empty id_model');
     }
 
     $modelOptionList = $this->getTypeOptionList($id_model);
     if (empty($modelOptionList)) {
-      $aResult['status'] = 'error';
-      $aResult['error'] = 'incorrect or empty id_model';
-
-      return;
+      $this->ajaxError('incorrect or empty id_model');
     }
 
     $aResult['types'] = $modelOptionList;
@@ -291,23 +288,28 @@ class CarController extends FrontController {
   protected function ajaxGetYears(&$aResult) {
     $id_type = (int)Tools::getValue('id_type', '');
     if (empty($id_type)) {
-      $aResult['status'] = 'error';
-      $aResult['error'] = 'incorrect or empty id_type';
-
-      return;
+      $this->ajaxError('incorrect or empty id_type');
     }
 
     $yearList = $this->getYearOptionList($id_type);
     if (empty($yearList)) {
-      $aResult['status'] = 'error';
-      $aResult['error'] = 'incorrect or empty id_type';
-
-      return;
+      $this->ajaxError('incorrect or empty id_type');
     }
 
     $aResult['years'] = $yearList;
   }
 
+  protected function ajaxError($sMessage) {
+    $this->_ajaxResult['status'] = 'error';
+    $this->_ajaxResult['error'] = $sMessage;
+    
+    die(Tools::jsonEncode($this->_ajaxResult));
+  }
   
+  protected function checkAjaxCustomerCar() {
+    if (!$this->_bCustomerHasCar) {
+      $this->ajaxError('customer has no car with this id_car');
+    }
+  }
   
 }

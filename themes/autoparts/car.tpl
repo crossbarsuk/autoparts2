@@ -39,11 +39,16 @@ var updateYears = function(data) {
 var updateCar = function(data) {
   $('#carname').text(data.car.name);
   $('#vin').text(data.car.vin);
-  $('#year').text(data.car.year);
+  $('#year').text(data.car.year != '' ? data.car.year + '{l s=' г'}' : '');
   $('#linkEdit').prop('href', linkEdit + data.car.id_car);
-  $('#linkDelete').prop('href', linkDelete + data.car.id_car);
+//  $('#linkDelete').prop('href', linkDelete + data.car.id_car);
   $('#linkCatalog').prop('href', data.car.manufacturer != '' ? linkCatalog + data.car.manufacturer + '/?carvin=' + data.car.vin : '#');
   
+}
+
+var updateCarList = function(data) {
+  $('#id_car > option:selected').remove();
+  $('#id_car').trigger('refresh');
 }
 
 function changeManufacturer(id_manufacturer) {
@@ -69,7 +74,30 @@ function changeCar(id_car) {
   ajaxQuery('action=getcar&id_car=' + id_car, updateCar);
 }
 
+function deleteCar(id_car) {
+  ajaxQuery('delete=1&id_car=' + id_car, updateCarList);
+}
+
 $(document).ready(function() {
+  $("#confirm_delete").dialog({
+    autoOpen: false,
+    modal: true,
+    buttons: {
+      "{l s='Confirm' mod='bulkcombinationimages'}": function() {
+        $(this).dialog("close");
+        deleteCar($('#id_car').val());
+      },
+      "{l s='Cancel' mod='bulkcombinationimages'}": function() {
+        $(this).dialog("close");
+      }
+    }
+  });
+
+  $('#linkDelete').click(function (e) {
+    e.preventDefault();
+    $("#confirm_delete").dialog('open');
+  });
+  
   $('#id_manufacturer').change(function() {
     changeManufacturer($(this).val());
   });
@@ -163,11 +191,12 @@ $(document).ready(function() {
   </p>
   <div class="car">
     <a href="#"><span class="img"><img id="img" alt="mazda 6" src="/themes/autoparts/img/car1.png"></span><span id="carname"></span></a>
-    <p>VIN: <span id="vin"></span><br><span id="year"></span>{l s=' г'}</p>
+    <p>VIN: <span id="vin"></span><br><span id="year"></span></p>
     <div class="car_control">
       <a {*id=""*} title="Характеристики" href="#" class="car_characteristics">{l s='Характеристики'}</a>
       <a id="linkEdit" title="Изменить" href="#" class="car_edit">{l s='Изменить'}</a>
       <a id="linkDelete" title="Удалить" href="#" class="car_del">{l s='Удалить'}</a>
+      <div id="confirm_delete" title="{l s='Confirmation Required'}">{l s='Are you sure you want to delete car?'}</div>
     </div>
   </div>
   <div class="car_inf">

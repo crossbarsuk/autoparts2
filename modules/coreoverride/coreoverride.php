@@ -85,7 +85,7 @@ class CoreOverride extends Module
           `id_customer` INT NOT NULL,
           `id_manufacturer` INT NOT NULL,
           `id_model` INT NOT NULL,
-          `id_mod` INT,
+          `id_type` INT,
           `active` TINYINT(1) NOT NULL DEFAULT 1,
           `deleted` TINYINT(1) NOT NULL DEFAULT 0,
           PRIMARY KEY (`id_car`)
