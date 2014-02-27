@@ -148,8 +148,8 @@ $(document).ready(function() {
     <select id="id_car" name="id_car">{$carList}</select>
   </p>
   <div class="car">
-    <a href="#"><span><img alt="mazda 6" src="img/car1.png"></span><span id="carname"></span></a>
-    <p>VIN: <span id="vin"></span><br><span id="year"></span></p>
+    <a href="#"><span class="img"><img id="img" alt="mazda 6" src="/themes/autoparts/img/car1.png"></span><span id="carname"></span></a>
+    <p>VIN: <span id="vin"></span><br><span id="year"></span>{l s=' г'}</p>
     <div class="car_control">
       <a {*id=""*} title="Характеристики" href="#" class="car_characteristics">{l s='Характеристики'}</a>
       <a id="linkEdit" title="Изменить" href="#" class="car_edit">{l s='Изменить'}</a>
