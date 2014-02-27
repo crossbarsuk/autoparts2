@@ -48,7 +48,13 @@ var updateCar = function(data) {
 
 var updateCarList = function(data) {
   $('#id_car > option:selected').remove();
+  
+  if ($('#id_car').html() == '') {
+    document.location = '{$link->getPageLink('car', null, null, 'edit_mode=1')}';
+  }
+  
   $('#id_car').trigger('refresh');
+  $('#id_car').trigger('change');
 }
 
 function changeManufacturer(id_manufacturer) {
@@ -75,7 +81,7 @@ function changeCar(id_car) {
 }
 
 function deleteCar(id_car) {
-  ajaxQuery('delete=1&id_car=' + id_car, updateCarList);
+  ajaxQuery('action=deletecar&id_car=' + id_car, updateCarList);
 }
 
 $(document).ready(function() {

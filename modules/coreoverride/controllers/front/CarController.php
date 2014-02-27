@@ -41,17 +41,17 @@ class CarController extends FrontController {
 
       switch ($action) {
         case 'getmodels' :
-          $this->ajaxGetModels($aResult);
+          $this->ajaxGetModels();
           break;
         case 'gettypes' :
-          $this->ajaxGetTypes($aResult);
+          $this->ajaxGetTypes();
           break;
         case 'getyears' :
           $this->ajaxGetYears($aResult);
           break;
         case 'getcar' :
           $this->checkAjaxCustomerCar();
-          $this->ajaxGetCar($aResult);
+          $this->ajaxGetCar();
           break;
         case 'deletecar' :
           $this->checkAjaxCustomerCar();
@@ -61,23 +61,23 @@ class CarController extends FrontController {
           break;
       }
 
-      die(Tools::jsonEncode($aResult));
+      die(Tools::jsonEncode($this->_ajaxResult));
     }
 
     $this->_bEditMode = (int)Tools::getValue('edit_mode', 0);
-    if ($this->_bEditMode) {
+    /*if ($this->_bEditMode) {
       // Initialize car
       if (Validate::isLoadedObject($this->_car) && Car::customerHasCar($this->_id_car)) {
         if (Tools::isSubmit('delete')) {
           if ($this->_car->delete()) {
-            Tools::redirect('index.php?controller=cars');
+            Tools::redirect('index.php?controller=car');
           }
           $this->errors[] = Tools::displayError('This car cannot be deleted.');
         }
       } else {
-        Tools::redirect('index.php?controller=cars');
+        Tools::redirect('index.php?controller=car');
       }
-    }
+    }*/
   }
 
   /**
@@ -105,6 +105,9 @@ class CarController extends FrontController {
       
     } else {
       $carList = $this->getCarOptionList();
+      if (empty($carList)) {
+        Tools::redirect('index.php?controller=car&edit_mode=1');
+      }
       $this->context->smarty->assign('carList', $carList);
     }
 
@@ -229,7 +232,7 @@ class CarController extends FrontController {
     return implode("\n", $list);
   }
   
-  protected function ajaxGetCar(&$aResult) {
+  protected function ajaxGetCar() {
     $id_car = (int)Tools::getValue('id_car', '');
     if (empty($id_car)) {
       $this->ajaxError('incorrect or empty id_car');
@@ -242,7 +245,7 @@ class CarController extends FrontController {
 
     $manufacturer = Car::getCarManufacturer($car->id);
 
-    $aResult['car'] = array(
+    $this->_ajaxResult['car'] = array(
       'id_car' => $car->id,
       'name' => $car->name,
       'vin' => $car->vin,
@@ -251,27 +254,21 @@ class CarController extends FrontController {
     );
   }
 
-  protected function ajaxGetModels(&$aResult) {
+  protected function ajaxGetModels() {
     $id_manufacturer = (int)Tools::getValue('id_manufacturer', '');
     if (empty($id_manufacturer)) {
-      $aResult['status'] = 'error';
-      $aResult['error'] = 'incorrect or empty id_manufacturer';
-      
-      return;
+      $this->ajaxError('incorrect or empty id_manufacturer');
     }
     
     $modelOptionList = $this->getModelOptionList($id_manufacturer);
     if (empty($modelOptionList)) {
-      $aResult['status'] = 'error';
-      $aResult['error'] = 'incorrect or empty model list';
-
-      return;
+      $this->ajaxError('incorrect or empty id_manufacturer');
     }
 
-    $aResult['models'] = $modelOptionList;
+    $this->_ajaxResult['models'] = $modelOptionList;
   }
 
-  protected function ajaxGetTypes(&$aResult) {
+  protected function ajaxGetTypes() {
     $id_model = (int)Tools::getValue('id_model', '');
     if (empty($id_model)) {
       $this->ajaxError('incorrect or empty id_model');
@@ -282,10 +279,10 @@ class CarController extends FrontController {
       $this->ajaxError('incorrect or empty id_model');
     }
 
-    $aResult['types'] = $modelOptionList;
+    $this->_ajaxResult['types'] = $modelOptionList;
   }
   
-  protected function ajaxGetYears(&$aResult) {
+  protected function ajaxGetYears() {
     $id_type = (int)Tools::getValue('id_type', '');
     if (empty($id_type)) {
       $this->ajaxError('incorrect or empty id_type');
@@ -296,7 +293,7 @@ class CarController extends FrontController {
       $this->ajaxError('incorrect or empty id_type');
     }
 
-    $aResult['years'] = $yearList;
+    $this->_ajaxResult['years'] = $yearList;
   }
 
   protected function ajaxError($sMessage) {
