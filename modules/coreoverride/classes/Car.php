@@ -18,7 +18,7 @@ class Car extends ObjectModel {
   public $id_customer;
   public $id_model;
   public $id_manufacturer;
-  public $id_mod;
+  public $id_type;
   public $active = 1;
   public $deleted = 0;
 
@@ -32,7 +32,7 @@ class Car extends ObjectModel {
       'id_customer' =>	array('type' => self::TYPE_STRING, 'validate' => 'isInt'),
       'id_manufacturer' =>	array('type' => self::TYPE_STRING, 'validate' => 'isInt'),
       'id_model' =>	array('type' => self::TYPE_STRING, 'validate' => 'isInt'),
-      'id_mod' =>	array('type' => self::TYPE_STRING, 'validate' => 'isInt'),
+      'id_type' =>	array('type' => self::TYPE_STRING, 'validate' => 'isInt'),
       'active' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
       'deleted' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
     ),
@@ -73,6 +73,20 @@ class Car extends ObjectModel {
     }
 
     return self::$_customerCars[$id_customer];
-    
   }
+  
+  static public function getCarManufacturer($id_car) {
+    $sql = new DbQuery();
+    $sql->select('id_manufacturer');
+    $sql->from('customer_car', 'car');
+    $sql->where('id_car = ' . (int)$id_car);
+    $id_manufacturer = Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue($sql->build());
+    if ($id_manufacturer) {
+      $tecdoc = new TecdocBase();
+      
+      return $tecdoc->getManufacturer($id_manufacturer);
+    }
+    
+    return false;
+  } 
 }

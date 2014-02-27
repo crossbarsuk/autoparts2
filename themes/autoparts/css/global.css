@@ -343,7 +343,6 @@ table.table_block  td {
   display: block;
   margin-bottom: 15px;
   padding: 15px 10px;
-  float: left;
 }
 
 #footer .block {margin-bottom:0}
@@ -2557,6 +2556,7 @@ tr.subitem > td:first-child + td {
 
 #center_column .block {
   padding: 8px 18px 16px;
+  float: left;
 }
 
 #center_column p.title_block {

@@ -41,6 +41,9 @@ class CarController extends FrontController {
         case 'getmodels' :
           $this->ajaxGetModels($aResult);
           break;
+        case 'gettypes' :
+          $this->ajaxGetTypes($aResult);
+          break;
         case 'getyears' :
           $this->ajaxGetYears($aResult);
           break;
@@ -118,6 +121,7 @@ class CarController extends FrontController {
   {
     $this->errors = $this->_car->validateController();
     $this->_car->id_customer = (int)$this->context->customer->id;
+    $this->_car->vin = strtoupper($this->_car->vin);
 
     // Check page token
     if ($this->context->customer->isLogged() && !$this->isTokenValid())
@@ -153,7 +157,16 @@ class CarController extends FrontController {
     }
     $this->errors[] = Tools::displayError('An error occurred while updating your car.');
   }
+  
+  protected function getCarOptionList() {
+    $list = array();
+    foreach (Car::getCustomerCars() as $aCar) {
+      $list[] = '<option value="' . $aCar['id_car'] . '">' . $aCar['name'] . '</option>';
+    }
 
+    return implode("\n", $list);
+  }
+  
   protected function getModelOptionList($iManufacturerId, $bOnlyPassenger = true) {
     $id_model = is_object($this->_car) && !empty($this->_car->id_model) ? $this->_car->id_model : 0;
     
@@ -178,21 +191,61 @@ class CarController extends FrontController {
     return implode("\n", $list);
   }
 
-  protected function getYearOptionList($iModelId) {
+  protected function getYearOptionList($iTypeId) {
     $year = is_object($this->_car) && !empty($this->_car->year) ? $this->_car->year : 0;
     
     $tecdoc = new TecdocBase();
-    $aModel = $tecdoc->getModel($iModelId);
+    $aType = $tecdoc->getType($iTypeId);
 
     $yearList = array();
-    if (is_array($aModel) && count($aModel)) {
-      $iEnd = !empty($aModel['end']) ? (int)substr($aModel['end'], 0, 4) : (int)date('Y');
-      for ($i = (int)substr($aModel['start'], 0, 4); $i <= $iEnd; ++$i) {
+    if (is_array($aType) && count($aType)) {
+      $iEnd = !empty($aType['end']) ? (int)substr($aType['end'], 0, 4) : (int)date('Y');
+      for ($i = (int)substr($aType['start'], 0, 4); $i <= $iEnd; ++$i) {
         $yearList[] = '<option value="' . $i . '"' . ($year == $i ? ' selected="selected"' : '') . '>' . $i . '</option>';
       }
     }
 
     return implode("\n", $yearList);
+  }
+
+  protected function getTypeOptionList($iModelId) {
+    $id_type = is_object($this->_car) && !empty($this->_car->id_type) ? $this->_car->id_type : 0;
+
+    $list = array();
+    $tecdoc = new TecdocBase();
+    foreach ($tecdoc->getTypes($iModelId) as $aItem) {
+      $list[] = '<option value="' . $aItem['id'] . '"' . ($id_type == $aItem['id'] ? ' selected="selected"' : '') . '>' . $aItem['name'] . '</option>';
+    }
+
+    return implode("\n", $list);
+  }
+  
+  protected function ajaxGetCar(&$aResult) {
+    $id_car = (int)Tools::getValue('id_car', '');
+    if (empty($id_car)) {
+      $aResult['status'] = 'error';
+      $aResult['error'] = 'incorrect or empty id_car';
+
+      return;
+    }
+
+    $car = new Car($id_car);
+    if (!is_object($car)) {
+      $aResult['status'] = 'error';
+      $aResult['error'] = 'incorrect or empty id_car';
+
+      return;
+    }
+
+    $manufacturer = Car::getCarManufacturer($car->id);
+
+    $aResult['car'] = array(
+      'id_car' => $car->id,
+      'name' => $car->name,
+      'vin' => $car->vin,
+      'year' => $car->year,
+      'manufacturer' => isset($manufacturer['name']) ? $manufacturer['name'] : '',
+    );
   }
 
   protected function ajaxGetModels(&$aResult) {
@@ -215,7 +268,7 @@ class CarController extends FrontController {
     $aResult['models'] = $modelOptionList;
   }
 
-  protected function ajaxGetYears(&$aResult) {
+  protected function ajaxGetTypes(&$aResult) {
     $id_model = (int)Tools::getValue('id_model', '');
     if (empty($id_model)) {
       $aResult['status'] = 'error';
@@ -224,10 +277,30 @@ class CarController extends FrontController {
       return;
     }
 
-    $yearList = $this->getYearOptionList($id_model);
-    if (empty($yearList)) {
+    $modelOptionList = $this->getTypeOptionList($id_model);
+    if (empty($modelOptionList)) {
       $aResult['status'] = 'error';
       $aResult['error'] = 'incorrect or empty id_model';
+
+      return;
+    }
+
+    $aResult['types'] = $modelOptionList;
+  }
+  
+  protected function ajaxGetYears(&$aResult) {
+    $id_type = (int)Tools::getValue('id_type', '');
+    if (empty($id_type)) {
+      $aResult['status'] = 'error';
+      $aResult['error'] = 'incorrect or empty id_type';
+
+      return;
+    }
+
+    $yearList = $this->getYearOptionList($id_type);
+    if (empty($yearList)) {
+      $aResult['status'] = 'error';
+      $aResult['error'] = 'incorrect or empty id_type';
 
       return;
     }
@@ -235,37 +308,6 @@ class CarController extends FrontController {
     $aResult['years'] = $yearList;
   }
 
-  protected function ajaxGetCar(&$aResult) {
-    $id_car = (int)Tools::getValue('id_car', '');
-    if (empty($id_car)) {
-      $aResult['status'] = 'error';
-      $aResult['error'] = 'incorrect or empty id_car';
-
-      return;
-    }
-
-    $car = new Car($id_car);
-    if (!is_object($car)) {
-      $aResult['status'] = 'error';
-      $aResult['error'] = 'incorrect or empty id_car';
-
-      return;
-    }
-
-    $aResult['car'] = array(
-      'id_car' => $car->id,
-      'name' => $car->name,
-      'vin' => $car->vin,
-      'year' => $car->year,
-    );
-  }
   
-  protected function getCarOptionList() {
-    $list = array();
-    foreach (Car::getCustomerCars() as $aCar) {
-      $list[] = '<option value="' . $aCar['id_car'] . '">' . $aCar['name'] . '</option>';
-    }
-
-    return implode("\n", $list);
-  }
+  
 }

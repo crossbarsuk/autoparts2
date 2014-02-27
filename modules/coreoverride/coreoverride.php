@@ -80,7 +80,7 @@ class CoreOverride extends Module
         CREATE TABLE `'._DB_PREFIX_.'customer_car` (
           `id_car` INT NOT NULL AUTO_INCREMENT,
           `name` VARCHAR(255) NOT NULL,
-          `vin` VARCHAR(255),
+          `vin` VARCHAR(255) NOT NULL,
           `year` SMALLINT(4),
           `id_customer` INT NOT NULL,
           `id_manufacturer` INT NOT NULL,

@@ -111,6 +111,11 @@
   width: 210px;
 }
 
+#car #center_column fieldset p {
+  float: left;
+  width: 100%;
+}
+
 #car #center_column p .jq-selectbox-wrapper {
   float: left;
   width: 170px;
@@ -126,13 +131,10 @@
   width: 170px;
 }
 
-#car #center_column p input[type=text] {
-  width: 160px;
-  margin-left: 0px;
-}
-
 #car #center_column p input[type="text"] {
   width: 160px;
+  margin-left: 0;
+  text-transform: uppercase;
 }
 
 #car #center_column .car_inf .tabs {

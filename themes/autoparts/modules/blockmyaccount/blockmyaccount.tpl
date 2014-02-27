@@ -12,7 +12,7 @@
     </li>
     <li class="bullet"><a href="{$link->getPageLink('history')|escape:'html'}" title="{l s='Заказы' mod='blockuserinfo'}">{l s='Заказы' mod='blockuserinfo'}</a>
     </li>
-    <li class="bullet"><a href="{$link->getPageLink('history')|escape:'html'}" title="{l s='Автомобили' mod='blockuserinfo'}">{l s='Автомобили' mod='blockuserinfo'}</a>
+    <li class="bullet"><a href="{$link->getPageLink('car')|escape:'html'}" title="{l s='Автомобили' mod='blockuserinfo'}">{l s='Автомобили' mod='blockuserinfo'}</a>
     </li>
     <li class="bullet"><a href="{$link->getPageLink('history')|escape:'html'}" title="{l s='Запросы по VIN' mod='blockuserinfo'}">{l s='Запросы по VIN' mod='blockuserinfo'}</a>
     </li>
