@@ -296,7 +296,6 @@ input.exclusive_large, input.exclusive_large_disabled, a.exclusive_large, span.e
 
 /* form **************************************************************************************** */
 form.std fieldset {
-  float: left;
 }
 
 /* table *************************************************************************************** */
@@ -343,7 +342,6 @@ table.table_block  td {
   display: block;
   margin-bottom: 15px;
   padding: 15px 10px;
-  float: left;
 }
 
 #footer .block {margin-bottom:0}
@@ -2430,7 +2428,7 @@ tr.subitem > td:first-child + td {
   line-height: 11px;
   position: absolute;
   text-transform: uppercase;
-  top: 112px;
+  top: 102px;
 }
 
 .header_adress {

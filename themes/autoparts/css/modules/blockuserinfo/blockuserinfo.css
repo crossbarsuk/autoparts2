@@ -57,13 +57,13 @@
   border-width: medium 2px 2px;
   display: block;
   float: right;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
+	-moz-border-radius: 0 0 5px 5px;
+	-webkit-border-radius: 0 0 5px 5px;
 	/*border-radius: 3px;*/
   /*display:block;*/
   font-family: 'Open Sans',sans-serif;
   font-size: 14px;
-  padding: 7px 20px 8px 36px;
+  padding: 7px 16px 8px 36px;
   line-height: 20px;
   min-width: 153px;
   color: #051F3C;
