@@ -5,5 +5,5 @@ override/
 cache/
 config/xml
 log
-img/
+img/*
 !modules/**/img
